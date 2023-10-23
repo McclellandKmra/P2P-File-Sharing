@@ -15,6 +15,8 @@ public class PeerProcess {
     private int pieceSize;
     private int peerID;
 
+    private BitSet bitfield;
+
     private Map<Integer, PeerInfo> peers = new HashMap<>();
 
     private ServerSocket serverSocket;
@@ -119,7 +121,15 @@ public class PeerProcess {
     }
 
     public void initalizeBitfield() {
-        //TODO: fill with ones if its the first peer, fill with 0s otherwise
+        PeerInfo currentPeer = peers.get(peerID);
+        int totalPieces = (int) Math.ceil((double) fileSize / pieceSize);
+        bitfield = new BitSet(totalPieces);
+
+        if (currentPeer.hasFile) {
+            bitfield.set(0, totalPieces);  // Set all bits to 1 if the peer has the complete file
+        } else {
+            bitfield.clear();  // Clear all bits (set to 0) if the peer does not have the complete file
+        }
     }
 
     public void startServer() {
