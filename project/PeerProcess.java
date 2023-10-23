@@ -6,15 +6,21 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 
 public class PeerProcess {
-    private int NumberOfPreferredNeighbors;
-    private int UnchokingInterval;
-    private int OptimisticUnchokingInterval;
-    private String FileName;
-    private int FileSize;
-    private int PieceSize;
-    private int PeerID;
+    public Thread t1;
+    private int numberOfPreferredNeighbors;
+    private int unchokingInterval;
+    private int optimisticUnchokingInterval;
+    private String fileName;
+    private int fileSize;
+    private int pieceSize;
+    private int peerID;
 
     private Map<Integer, PeerInfo> peers = new HashMap<>();
+
+    private ServerSocket serverSocket;
+    private HashMap<Socket, ObjectOutputStream> objectOutputStreams = new HashMap<>();
+    private HashMap<Socket, ObjectInputStream> objectInputStreams = new HashMap<>();
+    private List<Socket> incomingConnections;
 
     public class PeerInfo {
         int peerID;
@@ -38,11 +44,20 @@ public class PeerProcess {
         
         int PeerID = Integer.parseInt(args[0]);
         PeerProcess peerProcess = new PeerProcess(PeerID);
-        peerProcess.
+
+        peerProcess.initalizeBitfield();
+        
+        peerProcess.t1 = new Thread(()->{
+            peerProcess.startServer();
+        });
+
+
+        
+        //connect to relevant peer processes
     }
 
-    public PeerProcess(int PeerID) {
-        this.PeerID = PeerID;
+    public PeerProcess(int peerID) {
+        this.peerID = peerID;
         try {
             readCommon();
             readPeerInfo();
@@ -62,22 +77,22 @@ public class PeerProcess {
 
                 switch (key) {
                     case "NumberOfPreferredNeighbors":
-                        NumberOfPreferredNeighbors = Integer.parseInt(value);
+                        numberOfPreferredNeighbors = Integer.parseInt(value);
                         break;
                     case "UnchokingInterval":
-                        UnchokingInterval = Integer.parseInt(value);
+                        unchokingInterval = Integer.parseInt(value);
                         break;
                     case "OptimisticUnchokingInterval":
-                        OptimisticUnchokingInterval = Integer.parseInt(value);
+                        optimisticUnchokingInterval = Integer.parseInt(value);
                         break;
                     case "FileName":
-                        FileName = value;
+                        fileName = value;
                         break;
                     case "FileSize":
-                        FileSize = Integer.parseInt(value);
+                        fileSize = Integer.parseInt(value);
                         break;
                     case "PieceSize":
-                        PieceSize = Integer.parseInt(value);
+                        pieceSize = Integer.parseInt(value);
                         break;
                 }
             }
@@ -97,5 +112,57 @@ public class PeerProcess {
             }
         }
     }
+
+    public void initalizeBitfield() {
+        //TODO: fill with ones if its the first peer, fill with 0s otherwise
+    }
+
+    public void startServer() {
+        PeerInfo currentPeer = peers.get(peerID);
+
+        // Starting listener on its own port
+        try {
+            serverSocket = new ServerSocket(currentPeer.port);
+        } catch (IOException e) {
+            System.err.println("Error starting server socket on port " + currentPeer.port);
+            return;
+        }
+
+        try{
+            while(true) {
+                Socket socket = serverSocket.accept();
+                objectOutputStreams.put(socket, new ObjectOutputStream(socket.getOutputStream()));
+                objectInputStreams.put(socket, new ObjectInputStream(socket.getInputStream()));
+                incomingConnections.add(socket);
+                sendHandshake(socket);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void sendHandshake(Socket socket) {
+        try {
+            ObjectOutputStream out = objectOutputStreams.get(socket);
+            
+            // Format message
+            String header = "P2PFILESHARINGPROJ";
+            byte[] zeroBits = new byte[10];
+            byte[] peerIDBytes = ByteBuffer.allocate(4).putInt(peerID).array();
+    
+            // Create handshake message
+            ByteArrayOutputStream handshakeMsg = new ByteArrayOutputStream();
+            handshakeMsg.write(header.getBytes());
+            handshakeMsg.write(zeroBits);
+            handshakeMsg.write(peerIDBytes);
+    
+            // Send handshake message
+            out.writeObject(handshakeMsg.toByteArray());
+    
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+    
 }
 
