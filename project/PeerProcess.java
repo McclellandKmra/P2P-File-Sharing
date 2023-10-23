@@ -154,6 +154,9 @@ public class PeerProcess {
                 Thread listenerThread = new Thread(() -> listenForMessages(socket));
                 listenerThread.start();
                 listenerThreads.add(listenerThread);
+                if (currentPeer.hasFile) {
+                    sendBitfieldMessage(socket);
+                }
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -234,6 +237,9 @@ public class PeerProcess {
                     Thread listenerThread = new Thread(() -> listenForMessages(socket));
                     listenerThread.start();
                     listenerThreads.add(listenerThread);
+                    if (peers.get(peerID).hasFile) {
+                        sendBitfieldMessage(socket);
+                    }
     
                 } catch (IOException e) {
                     System.err.println("Error connecting to peer " + currentPeerId + " at " + peerInfo.hostname + ":" + peerInfo.port);
@@ -266,15 +272,48 @@ public class PeerProcess {
     }
 
     public void handleMessage(Socket socket, byte[] message) {
-        int messageType = Byte.toUnsignedInt(message[0]);
+        int messageType = Byte.toUnsignedInt(message[4]);
         switch(messageType) {
             case 5: handleBitfieldMessage(socket, message);
         }
     }
 
     public void handleBitfieldMessage(Socket socket, byte[] message) {
-
+        System.out.println("Received bitfield message from " + socket.getRemoteSocketAddress());
     }
+
+    public void sendBitfieldMessage(Socket socket) {
+        try {
+            ObjectOutputStream out = objectOutputStreams.get(socket);
+            
+            byte[] bitfieldBytes = bitsetToByteArray(bitfield);
+
+            // Calculate the total message length: 4 bytes for the length itself, 1 byte for the type, and the size of the bitfield
+            int messageLength = 4 + 1 + bitfieldBytes.length;
+
+            ByteBuffer buffer = ByteBuffer.allocate(messageLength);
+            buffer.putInt(messageLength); // Message length
+            buffer.put((byte) 5); // Bitfield message type
+            buffer.put(bitfieldBytes);
+
+            out.writeObject(buffer.array());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private byte[] bitsetToByteArray(BitSet bitset) {
+        int byteCount = (bitset.length() + 7) / 8; // This ensures rounding up if not a multiple of 8
+        byte[] bytes = new byte[byteCount];
+
+        for (int i = 0; i < bitset.length(); i++) {
+            if (bitset.get(i)) {
+                bytes[i / 8] |= 1 << (7 - i % 8); // Set the specific bit in the byte
+            }
+        }
+        return bytes;
+    }
+
     
 }
 
