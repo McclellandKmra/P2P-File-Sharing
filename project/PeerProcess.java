@@ -6,42 +6,23 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 
 public class PeerProcess {
-    private int NumberOfPreferredNeighbors;
-    private int UnchokingInterval;
-    private int OptimisticUnchokingInterval;
-    private String FileName;
-    private int FileSize;
-    private int PieceSize;
-    private static int PeerID;
+    public Thread t1;
+    private int numberOfPreferredNeighbors;
+    private int unchokingInterval;
+    private int optimisticUnchokingInterval;
+    private String fileName;
+    private int fileSize;
+    private int pieceSize;
+    private int peerID;
 
     private Map<Integer, PeerInfo> peers = new HashMap<>();
 
     private ServerSocket serverSocket;
-
-    private static final String HANDSHAKE_HEADER = "P2PFILESHARINGPROJ";
-
-    private byte[] createHandshakeMessage(int peerID) {
-        byte[] header = HANDSHAKE_HEADER.getBytes();
-        byte[] zeroBits = new byte[10];
-        byte[] peerIDBytes = ByteBuffer.allocate(4).putInt(peerID).array();
-
-        ByteBuffer buffer = ByteBuffer.allocate(32);
-        buffer.put(header);
-        buffer.put(zeroBits);
-        buffer.put(peerIDBytes);
-
-        return buffer.array();
-    }
-
-    private boolean isValidHandshake(byte[] handshakeMsg) {
-        byte[] header = new byte[18];
-        byte[] peerIDBytes = new byte[4];
-
-        System.arraycopy(handshakeMsg, 0, header, 0, 18);
-        System.arraycopy(handshakeMsg, 28, peerIDBytes, 0, 4);
-
-        return HANDSHAKE_HEADER.equals(new String(header));
-    }
+    private HashMap<Socket, ObjectOutputStream> objectOutputStreams = new HashMap<>();
+    private HashMap<Socket, ObjectInputStream> objectInputStreams = new HashMap<>();
+    private List<Socket> incomingConnections = new ArrayList<>();
+    private List<Socket> outgoingConnections = new ArrayList<>();
+    private List<Thread> listenerThreads = new ArrayList<>();
 
     public class PeerInfo {
         int peerID;
@@ -57,147 +38,73 @@ public class PeerProcess {
         }
     }
 
-    public PeerProcess() {
+    public static void main(String[] args) {
+        if (args.length != 1) {
+            System.err.println("Usage: java PeerProcess <peerID>");
+            return;
+        }
+        
+        int PeerID = Integer.parseInt(args[0]);
+        PeerProcess peerProcess = new PeerProcess(PeerID);
+
+        peerProcess.initalizeBitfield();
+        
+        peerProcess.t1 = new Thread(()->{
+            peerProcess.startServer();
+        });
+        peerProcess.t1.start();
+
+        peerProcess.connectToServers();
+
+
+        
+        //connect to relevant peer processes
+    }
+
+    public PeerProcess(int peerID) {
+        this.peerID = peerID;
         try {
             readCommon();
             readPeerInfo();
         } catch (IOException e) {
             e.printStackTrace();
-            System.err.println("Error reading configuration files.");
         }
     }
-
-    private void startPeerProcess(int peerID) {
-        PeerInfo currentPeer = peers.get(peerID);
-        if (currentPeer == null) {
-            System.err.println("Invalid peer ID provided.");
-            return;
-        }
-
-        // Starting listener on its own port
-        try {
-            serverSocket = new ServerSocket(currentPeer.port);
-            // Start a new thread to handle incoming connections
-            new Thread(this::handleIncomingConnections).start();
-        } catch (IOException e) {
-            System.err.println("Error starting server socket on port " + currentPeer.port);
-            return;
-        }
-        
-        // Connect to peers that started before the current peer
-        for (Map.Entry<Integer, PeerInfo> entry : peers.entrySet()) {
-            if (entry.getKey() < peerID) {
-                // Connect to entry.getValue()
-                try {
-                    Socket socket = new Socket(entry.getValue().hostname, entry.getValue().port);
-                    System.out.println("[" + getCurrentTimestamp() + "]: Peer [" + peerID + "] makes a connection to Peer [" + entry.getKey() + "].");
-                    new Thread(() -> handleConnection(socket)).start();
-                } catch (IOException e) {
-                    System.err.println("Error connecting to " + entry.getValue().hostname + " on port " + entry.getValue().port);
-                }
-            }
-        }
-    }
-
-    private void handleIncomingConnections() {
-        while (true) {
-            try {
-                Socket socket = serverSocket.accept();
-                System.out.println("[" + getCurrentTimestamp() + "]: Peer [??] is connected from Peer [??].");
-                new Thread(() -> handleConnection(socket)).start();
-            } catch (IOException e) {
-                System.err.println("Error while accepting connection.");
-                // Optionally handle the error further or decide when to break the loop.
-            }
-        }
-    }
-
-    // This is a placeholder method to handle the connection
-    private void handleConnection(Socket socket) {
-        try {
-            DataInputStream in = new DataInputStream(socket.getInputStream());
-            DataOutputStream out = new DataOutputStream(socket.getOutputStream());
-
-            // Sending handshake message
-            out.write(createHandshakeMessage(PeerID));
-
-            // Reading and validating handshake message from other peer
-            byte[] receivedHandshake = new byte[32];
-            in.readFully(receivedHandshake);
-
-            if (!isValidHandshake(receivedHandshake)) {
-                System.out.println("Invalid handshake received. Closing connection.");
-                socket.close();
-                return;
-            }
-
-            System.out.println("Valid handshake received from Peer [" + ByteBuffer.wrap(receivedHandshake, 28, 4).getInt() + "]");
-
-            // Continue with further message handling after handshake
-
-        } catch (IOException e) {
-            System.err.println("Error during handshake with " + socket.getRemoteSocketAddress());
-            // Handle error further if necessary
-        }
-    }
-
-
-    public static void main(String[] args) {
-    if (args.length != 1) {
-        System.err.println("Usage: java PeerProcess <peerID>");
-        return;
-    }
-    
-    PeerID = Integer.parseInt(args[0]);
-    
-    PeerProcess peer = new PeerProcess();
-    peer.startPeerProcess(PeerID);
-    }
-
-
-
-
-    // file reading
 
     //reads and stores data from Common.cfg
-    private void readCommon() throws IOException {
+    public void readCommon() throws IOException {
         try (BufferedReader reader = new BufferedReader(new FileReader("Common.cfg"))) {
             String line;
             while ((line = reader.readLine()) != null) {
                 String[] parts = line.split(" ");
-                if (parts.length != 2) {
-                    // Malformed line; you can handle this error as you see fit
-                    continue;
-                }
                 String key = parts[0];
                 String value = parts[1];
 
                 switch (key) {
                     case "NumberOfPreferredNeighbors":
-                        NumberOfPreferredNeighbors = Integer.parseInt(value);
+                        numberOfPreferredNeighbors = Integer.parseInt(value);
                         break;
                     case "UnchokingInterval":
-                        UnchokingInterval = Integer.parseInt(value);
+                        unchokingInterval = Integer.parseInt(value);
                         break;
                     case "OptimisticUnchokingInterval":
-                        OptimisticUnchokingInterval = Integer.parseInt(value);
+                        optimisticUnchokingInterval = Integer.parseInt(value);
                         break;
                     case "FileName":
-                        FileName = value;
+                        fileName = value;
                         break;
                     case "FileSize":
-                        FileSize = Integer.parseInt(value);
+                        fileSize = Integer.parseInt(value);
                         break;
                     case "PieceSize":
-                        PieceSize = Integer.parseInt(value);
+                        pieceSize = Integer.parseInt(value);
                         break;
                 }
             }
         }
     }
 
-    //reads and stores data from PeerInfo.cfg
-    private void readPeerInfo() throws IOException {
+    public void readPeerInfo() throws IOException {
         try (BufferedReader reader = new BufferedReader(new FileReader("PeerInfo.cfg"))) {
             String line;
             while ((line = reader.readLine()) != null) {
@@ -211,12 +118,146 @@ public class PeerProcess {
         }
     }
 
-
-
-    // helper functions
-    private static String getCurrentTimestamp() {
-    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-    return sdf.format(new Date());
+    public void initalizeBitfield() {
+        //TODO: fill with ones if its the first peer, fill with 0s otherwise
     }
+
+    public void startServer() {
+        PeerInfo currentPeer = peers.get(peerID);
+
+        // Starting listener on its own port
+        try {
+            serverSocket = new ServerSocket(currentPeer.port);
+        } catch (IOException e) {
+            System.err.println("Error starting server socket on port " + currentPeer.port);
+            return;
+        }
+
+        try{
+            while(true) {
+                Socket socket = serverSocket.accept();
+                objectOutputStreams.put(socket, new ObjectOutputStream(socket.getOutputStream()));
+                objectInputStreams.put(socket, new ObjectInputStream(socket.getInputStream()));
+                incomingConnections.add(socket);
+                sendHandshake(socket);
+                receiveHandshake(socket);
+                Thread listenerThread = new Thread(() -> listenForMessages(socket));
+                listenerThread.start();
+                listenerThreads.add(listenerThread);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void sendHandshake(Socket socket) {
+        try {
+            ObjectOutputStream out = objectOutputStreams.get(socket);
+            
+            // Format message
+            String header = "P2PFILESHARINGPROJ";
+            byte[] zeroBits = new byte[10];
+            byte[] peerIDBytes = ByteBuffer.allocate(4).putInt(peerID).array();
+    
+            // Create handshake message
+            ByteArrayOutputStream handshakeMsg = new ByteArrayOutputStream();
+            handshakeMsg.write(header.getBytes());
+            handshakeMsg.write(zeroBits);
+            handshakeMsg.write(peerIDBytes);
+    
+            // Send handshake message
+            out.writeObject(handshakeMsg.toByteArray());
+    
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+    
+    public void receiveHandshake(Socket socket) {
+        try {
+            ObjectInputStream in = objectInputStreams.get(socket);
+    
+            // Read the handshake message bytes
+            byte[] handshakeBytes = (byte[]) in.readObject();
+    
+            // Parse the handshake
+            String header = new String(handshakeBytes, 0, 18);
+            if (!header.equals("P2PFILESHARINGPROJ")) {
+                throw new IllegalArgumentException("Invalid handshake header");
+            }
+    
+            // Extract peer ID from the last 4 bytes
+            int receivedPeerID = ByteBuffer.wrap(handshakeBytes, 28, 4).getInt();
+
+            //log the message
+            System.out.println("received handshake from " + receivedPeerID);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return;
+        }
+    }
+
+    public void connectToServers() {
+        // Iterate over each peer from the peers map
+        for (Map.Entry<Integer, PeerInfo> entry : peers.entrySet()) {
+            int currentPeerId = entry.getKey();
+            PeerInfo peerInfo = entry.getValue();
+    
+            // Only attempt to connect if the currentPeerId is less than this peer's ID
+            if (currentPeerId < this.peerID) {
+                try {
+                    Socket socket = new Socket(peerInfo.hostname, peerInfo.port);
+    
+                    // Create ObjectOutputStream and ObjectInputStream for the new connection
+                    ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
+                    ObjectInputStream in = new ObjectInputStream(socket.getInputStream());
+    
+                    // Store these streams in the appropriate maps
+                    objectOutputStreams.put(socket, out);
+                    objectInputStreams.put(socket, in);
+                    incomingConnections.add(socket);
+    
+                    // Send a handshake message to the connected peer
+                    sendHandshake(socket);
+                    receiveHandshake(socket);
+                    Thread listenerThread = new Thread(() -> listenForMessages(socket));
+                    listenerThread.start();
+                    listenerThreads.add(listenerThread);
+    
+                } catch (IOException e) {
+                    System.err.println("Error connecting to peer " + currentPeerId + " at " + peerInfo.hostname + ":" + peerInfo.port);
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+    
+    public void listenForMessages(Socket socket) {
+        try {
+            ObjectInputStream in = objectInputStreams.get(socket);
+            
+            while (true) {
+                byte[] message = (byte[]) in.readObject();
+                handleMessage(socket, message);
+            }
+        } catch (EOFException e) {
+            // The other end has probably closed the connection.
+            System.out.println("Connection closed by " + socket.getRemoteSocketAddress());
+        } catch (IOException | ClassNotFoundException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                socket.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public void handleMessage(Socket socket, byte[] message) {
+
+    }
+    
 }
 
