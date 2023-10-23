@@ -4,6 +4,10 @@ import java.nio.*;
 import java.nio.channels.*;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.logging.FileHandler;
+import java.util.logging.Logger;
+import java.util.logging.SimpleFormatter;
+
 
 public class PeerProcess {
     public Thread t1;
@@ -14,8 +18,12 @@ public class PeerProcess {
     private int fileSize;
     private int pieceSize;
     private int peerID;
+    Logger logger;
+
 
     private Map<Integer, PeerInfo> peers = new HashMap<>();
+    private HashMap<Integer, ArrayList<Integer>> fileContents = new HashMap<>();
+
 
     private ServerSocket serverSocket;
     private HashMap<Socket, ObjectOutputStream> objectOutputStreams = new HashMap<>();
@@ -226,5 +234,27 @@ public class PeerProcess {
         }
     }
     
+     //Processes the file and adds it to the file system
+    public int processFile(String filename) {
+        try{
+            FileInputStream file = new FileInputStream(filename);
+            int count = 0;
+            int i = 0;
+            while((i = file.read()) != -1){
+                if(!fileContents.containsKey(count / pieceSize)){
+                    fileContents.put(count / pieceSize, new ArrayList<Integer>());
+                }
+                this.fileContents.get(count / pieceSize).add(i);
+                count++;
+            }
+            logger.info(count + " " + fileContents.get(fileContents.size() - 1).size());
+            file.close();
+            return count;
+        }
+        catch(Exception e){
+            e.printStackTrace();
+        }
+        return 0;
+    }  
 }
 
