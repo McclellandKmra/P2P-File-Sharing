@@ -20,7 +20,8 @@ public class PeerProcess {
     private ServerSocket serverSocket;
     private HashMap<Socket, ObjectOutputStream> objectOutputStreams = new HashMap<>();
     private HashMap<Socket, ObjectInputStream> objectInputStreams = new HashMap<>();
-    private List<Socket> incomingConnections;
+    private List<Socket> incomingConnections = new ArrayList<>();
+    private List<Socket> outgoingConnections = new ArrayList<>();
 
     public class PeerInfo {
         int peerID;
@@ -50,6 +51,9 @@ public class PeerProcess {
         peerProcess.t1 = new Thread(()->{
             peerProcess.startServer();
         });
+        peerProcess.t1.start();
+
+        peerProcess.connectToServers();
 
 
         
@@ -135,6 +139,7 @@ public class PeerProcess {
                 objectInputStreams.put(socket, new ObjectInputStream(socket.getInputStream()));
                 incomingConnections.add(socket);
                 sendHandshake(socket);
+                receiveHandshake(socket);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -161,6 +166,63 @@ public class PeerProcess {
     
         } catch (IOException e) {
             e.printStackTrace();
+        }
+    }
+    
+    public void receiveHandshake(Socket socket) {
+        try {
+            ObjectInputStream in = objectInputStreams.get(socket);
+    
+            // Read the handshake message bytes
+            byte[] handshakeBytes = (byte[]) in.readObject();
+    
+            // Parse the handshake
+            String header = new String(handshakeBytes, 0, 18);
+            if (!header.equals("P2PFILESHARINGPROJ")) {
+                throw new IllegalArgumentException("Invalid handshake header");
+            }
+    
+            // Extract peer ID from the last 4 bytes
+            int receivedPeerID = ByteBuffer.wrap(handshakeBytes, 28, 4).getInt();
+
+            //log the message
+            System.out.println("received handshake from " + receivedPeerID);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return;
+        }
+    }
+
+    public void connectToServers() {
+        // Iterate over each peer from the peers map
+        for (Map.Entry<Integer, PeerInfo> entry : peers.entrySet()) {
+            int currentPeerId = entry.getKey();
+            PeerInfo peerInfo = entry.getValue();
+    
+            // Only attempt to connect if the currentPeerId is less than this peer's ID
+            if (currentPeerId < this.peerID) {
+                try {
+                    Socket socket = new Socket(peerInfo.hostname, peerInfo.port);
+    
+                    // Create ObjectOutputStream and ObjectInputStream for the new connection
+                    ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
+                    ObjectInputStream in = new ObjectInputStream(socket.getInputStream());
+    
+                    // Store these streams in the appropriate maps
+                    objectOutputStreams.put(socket, out);
+                    objectInputStreams.put(socket, in);
+                    incomingConnections.add(socket);
+    
+                    // Send a handshake message to the connected peer
+                    sendHandshake(socket);
+                    receiveHandshake(socket);
+    
+                } catch (IOException e) {
+                    System.err.println("Error connecting to peer " + currentPeerId + " at " + peerInfo.hostname + ":" + peerInfo.port);
+                    e.printStackTrace();
+                }
+            }
         }
     }
     
