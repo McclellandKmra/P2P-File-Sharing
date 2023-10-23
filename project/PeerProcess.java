@@ -256,6 +256,13 @@ public class PeerProcess {
     }
 
     public void handleMessage(Socket socket, byte[] message) {
+        int messageType = Byte.toUnsignedInt(message[0]);
+        switch(messageType) {
+            case 5: handleBitfieldMessage(socket, message);
+        }
+    }
+
+    public void handleBitfieldMessage(Socket socket, byte[] message) {
 
     }
     
