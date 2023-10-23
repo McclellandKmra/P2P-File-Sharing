@@ -14,6 +14,22 @@ public class PeerProcess {
     private int PieceSize;
     private int PeerID;
 
+    private Map<Integer, PeerInfo> peers = new HashMap<>();
+
+    public class PeerInfo {
+        int peerID;
+        String hostname;
+        int port;
+        boolean hasFile;
+        
+        public PeerInfo(int peerID, String hostname, int port, boolean hasFile) {
+            this.peerID = peerID;
+            this.hostname = hostname;
+            this.port = port;
+            this.hasFile = hasFile;
+        }
+    }
+
     public static void main(String[] args) {
         if (args.length != 1) {
             System.err.println("Usage: java PeerProcess <peerID>");
@@ -22,13 +38,14 @@ public class PeerProcess {
         
         int PeerID = Integer.parseInt(args[0]);
         PeerProcess peerProcess = new PeerProcess(PeerID);
+        peerProcess.
     }
 
     public PeerProcess(int PeerID) {
         this.PeerID = PeerID;
         try {
             readCommon();
-            //TODO: readPeerInfo();
+            readPeerInfo();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -63,6 +80,20 @@ public class PeerProcess {
                         PieceSize = Integer.parseInt(value);
                         break;
                 }
+            }
+        }
+    }
+
+    public void readPeerInfo() throws IOException {
+        try (BufferedReader reader = new BufferedReader(new FileReader("PeerInfo.cfg"))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                String[] parts = line.split(" ");
+                int peerID = Integer.parseInt(parts[0]);
+                String hostname = parts[1];
+                int port = Integer.parseInt(parts[2]);
+                boolean hasFile = parts[3].equals("1");
+                peers.put(peerID, new PeerInfo(peerID, hostname, port, hasFile));
             }
         }
     }
