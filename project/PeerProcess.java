@@ -63,6 +63,9 @@ public class PeerProcess {
         //connect to relevant peer processes
     }
 
+    //Constructor for the class
+    //Takes in the peerID and reads the Common.cfg and PeerInfo.cfg files
+    //Initializes the commonConfig and peerInfoList variables
     public PeerProcess(int peerID) {
         this.peerID = peerID;
         try {
@@ -81,23 +84,30 @@ public class PeerProcess {
                 String[] parts = line.split(" ");
                 String key = parts[0];
                 String value = parts[1];
-
+                //Sets the appropriate variables based on the key
                 switch (key) {
+                    //Number of preferred neighbors for a peer to have
                     case "NumberOfPreferredNeighbors":
                         numberOfPreferredNeighbors = Integer.parseInt(value);
                         break;
+                    //The time interval (seconds) between unchoking events
                     case "UnchokingInterval":
                         unchokingInterval = Integer.parseInt(value);
                         break;
+                    //The time interval (seconds) between optimistic unchoking events
                     case "OptimisticUnchokingInterval":
                         optimisticUnchokingInterval = Integer.parseInt(value);
                         break;
+                    //The name of the file to be distributed
                     case "FileName":
                         fileName = value;
                         break;
+                    //The size of the file to be distributed (in bytes)
                     case "FileSize":
                         fileSize = Integer.parseInt(value);
                         break;
+                    //The size of the piece (in bytes) that the file is divided into
+                    //Pieces of the last piece may be smaller than this size
                     case "PieceSize":
                         pieceSize = Integer.parseInt(value);
                         break;
@@ -106,6 +116,8 @@ public class PeerProcess {
         }
     }
 
+    //Reads and stores data from PeerInfo.cfg
+    //Includes peerID, host name, port number, and whether or not the peer has the file
     public void readPeerInfo() throws IOException {
         try (BufferedReader reader = new BufferedReader(new FileReader("PeerInfo.cfg"))) {
             String line;
@@ -132,17 +144,21 @@ public class PeerProcess {
         }
     }
 
+    //Starts a server socket on the peer's listening port
     public void startServer() {
+        //Get the PeerInfo object for this peer
         PeerInfo currentPeer = peers.get(peerID);
 
-        // Starting listener on its own port
+        //Starting listener on its own port
         try {
             serverSocket = new ServerSocket(currentPeer.port);
-        } catch (IOException e) {
+        } 
+        catch (IOException e) {
             System.err.println("Error starting server socket on port " + currentPeer.port);
             return;
         }
 
+        //Infinite loop to accept incoming connections
         try{
             while(true) {
                 Socket socket = serverSocket.accept();
@@ -158,11 +174,14 @@ public class PeerProcess {
                     sendBitfieldMessage(socket);
                 }
             }
-        } catch (Exception e) {
+        } 
+        catch (Exception e) {
             e.printStackTrace();
         }
     }
 
+    //Responsible for sending handshake messages to peers over a socket
+    //Creates a handshake message by concatenating a header string ("P2PFILESHARINGPROJ"), 10 zero bits, and the local peer's ID as a 4-byte integer
     public void sendHandshake(Socket socket) {
         try {
             ObjectOutputStream out = objectOutputStreams.get(socket);
@@ -180,21 +199,23 @@ public class PeerProcess {
     
             // Send handshake message
             out.writeObject(handshakeMsg.toByteArray());
-    
-        } catch (IOException e) {
+        } 
+        catch (IOException e) {
             e.printStackTrace();
         }
     }
     
+    //Responsible for receiving handshake messages from peers over a socket
     public void receiveHandshake(Socket socket) {
         try {
             ObjectInputStream in = objectInputStreams.get(socket);
     
-            // Read the handshake message bytes
+            //Read the handshake message bytes
             byte[] handshakeBytes = (byte[]) in.readObject();
     
-            // Parse the handshake
+            //Parse the handshake
             String header = new String(handshakeBytes, 0, 18);
+            //Validates the header
             if (!header.equals("P2PFILESHARINGPROJ")) {
                 throw new IllegalArgumentException("Invalid handshake header");
             }
@@ -211,13 +232,15 @@ public class PeerProcess {
         }
     }
 
+    //Responsible for connecting to peers with a lower peer ID
     public void connectToServers() {
         // Iterate over each peer from the peers map
         for (Map.Entry<Integer, PeerInfo> entry : peers.entrySet()) {
             int currentPeerId = entry.getKey();
             PeerInfo peerInfo = entry.getValue();
     
-            // Only attempt to connect if the currentPeerId is less than this peer's ID
+            //Only attempt to connect if the currentPeerId is less than this peer's ID
+            //Ensures that the peer only connects to peers with a lower ID, ie ones that have already started
             if (currentPeerId < this.peerID) {
                 try {
                     Socket socket = new Socket(peerInfo.hostname, peerInfo.port);
