@@ -491,6 +491,19 @@ public class PeerProcess {
         }
     }
 
+    public void TCPLogMessage(int peerID1, int peerID2) {
+        String filepath = "log_peer_" + peerID1 + ".log";
+        Date date = new Date();
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        String dateString = formatter.format(date);
+        try(BufferedWriter writer = new BufferedWriter(new FileWriter(filepath, true))) {
+            writer.write(dateString + ": Peer " + peerID1 + " makes a connection to Peer " + peerID2 + ".");
+            writer.newLine();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
 
 
 }
