@@ -272,7 +272,7 @@ public class PeerProcess {
                     if (peers.get(peerID).hasFile) {
                         sendBitfieldMessage(socket);
                     }
-    
+                    TCPLogMessage(this.peerID, currentPeerId);
                 } catch (IOException e) {
                     System.err.println("Error connecting to peer " + currentPeerId + " at " + peerInfo.hostname + ":" + peerInfo.port);
                     e.printStackTrace();
@@ -492,7 +492,7 @@ public class PeerProcess {
     }
 
     public void TCPLogMessage(int peerID1, int peerID2) {
-        String filepath = "log_peer_" + peerID1 + ".log";
+        String filepath = "log_peer_" + peerID2 + ".log";
         Date date = new Date();
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         String dateString = formatter.format(date);
@@ -507,4 +507,3 @@ public class PeerProcess {
 
 
 }
-
