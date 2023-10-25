@@ -99,7 +99,6 @@ public class PeerProcess
     {
         
         try (BufferedReader reader = new BufferedReader(new FileReader("Common.cfg"))) {
-
             String line;
 
             while ((line = reader.readLine()) != null) 
@@ -151,7 +150,7 @@ public class PeerProcess
     //Includes peerID, host name, port number, and whether or not the peer has the file
     public void readPeerInfo() throws IOException 
     {
-        try (BufferedReader reader = new BufferedReader(new FileReader("PeerInfo.cfg"))) \
+        try (BufferedReader reader = new BufferedReader(new FileReader("PeerInfo.cfg")))
         {
             String line;
 
@@ -557,7 +556,7 @@ public class PeerProcess
     //TODO:
     private void handleUnchokeMessage(Socket socket, byte[] message) 
     {
-        System.out.println("getting choked by " + socket.getRemoteSocketAddress());
+        System.out.println("getting unchoked by " + socket.getRemoteSocketAddress());
     }
 
     private void sendChokeMessage(Socket socket) 
@@ -569,7 +568,7 @@ public class PeerProcess
     //TODO:
     private void handleChokeMessage(Socket socket, byte[] message) 
     {
-        System.out.println("getting unchoked by " + socket.getRemoteSocketAddress());
+        System.out.println("getting choked by " + socket.getRemoteSocketAddress());
     }
 
     //Choking
