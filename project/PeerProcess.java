@@ -18,6 +18,7 @@ public class PeerProcess {
     private BitSet bitfield;
     private HashMap<Socket, BitSet> peerBitfields = new HashMap<>();
     private List<Integer> requestedIndices = new ArrayList<>();
+    private Map<Integer, byte[]> fileContents;
 
 
     private Map<Integer, PeerInfo> peers = new HashMap<>();
@@ -55,7 +56,7 @@ public class PeerProcess {
         int PeerID = Integer.parseInt(args[0]);
         PeerProcess peerProcess = new PeerProcess(PeerID);
 
-        peerProcess.initalizeBitfield();
+        peerProcess.initialize();
         
         peerProcess.t1 = new Thread(()->{
             peerProcess.startServer();
@@ -142,19 +143,44 @@ public class PeerProcess {
             }
         }
     }
+    
+    public void initialize() {
+        //Initializes the bitfield and fileContents
 
-    public void initalizeBitfield() {
         PeerInfo currentPeer = peers.get(peerID);
         int totalPieces = (int) Math.ceil((double) fileSize / pieceSize);
         bitfield = new BitSet(totalPieces);
-
+        fileContents = new HashMap<>();
+    
         if (currentPeer.hasFile) {
-            bitfield.set(0, totalPieces);// Set all bits to 1 if the peer has the complete file
+            bitfield.set(0, totalPieces); // Set all bits to 1 as the peer has the complete file
+    
+            // Initialize file contents since this peer has the complete file
+            String filePath = "./" + peerID + "/" + fileName; // Adjust the file path as needed
+            File file = new File(filePath);
+    
+            try (FileInputStream fis = new FileInputStream(file)) {
+                byte[] buffer = new byte[pieceSize];
+                int bytesRead, pieceIndex = 0;
+    
+                while ((bytesRead = fis.read(buffer)) != -1) {
+                    byte[] actualData = bytesRead < pieceSize ? Arrays.copyOf(buffer, bytesRead) : buffer.clone();
+                    fileContents.put(pieceIndex++, actualData);
+    
+                    if (bytesRead < pieceSize) {
+                        buffer = new byte[pieceSize]; // Reset buffer for next read
+                    }
+                }
+            } catch (FileNotFoundException e) {
+                System.err.println("File not found: " + e.getMessage());
+            } catch (IOException e) {
+                System.err.println("IO Error while initializing file contents: " + e.getMessage());
+            }
         } else {
-            bitfield.clear();  // Clear all bits (set to 0) if the peer does not have the complete file
+            bitfield.clear(); // Clear all bits (set to 0) as the peer does not have the complete file
         }
     }
-
+    
     //Starts a server socket on the peer's listening port
     public void startServer() {
         //Get the PeerInfo object for this peer
@@ -495,7 +521,7 @@ public class PeerProcess {
         // Check if the piece is available
         if (bitfield.get(pieceIndex)) {
             // If the piece is available, read its data and send it
-            byte[] pieceData = readPieceData(pieceIndex);
+            byte[] pieceData = fileContents.get(pieceIndex);
             sendPieceMessage(socket, pieceIndex, pieceData);
         } else {
             // Handle the case where the requested piece is not available
@@ -514,8 +540,39 @@ public class PeerProcess {
     }
 
     private void handlePieceMessage(Socket socket, byte[] message) {
+        int pieceIndex = ByteBuffer.wrap(Arrays.copyOfRange(message, 5, 9)).getInt();
+        byte[] pieceData = Arrays.copyOfRange(message, 9, message.length);
+        fileContents.put(pieceIndex, pieceData);
+        
+        bitfield.set(pieceIndex);
+    
+        ByteBuffer buffer = ByteBuffer.allocate(4);
+        buffer.putInt(pieceIndex);
+        for (Socket connection : connections) {
+            sendHaveMessage(connection, buffer.array());
+        }
 
+        requestedIndices.remove(Integer.valueOf(pieceIndex));
+
+        //TODO: logic for if it has the whole file
+        if (fileContents.size() == Math.ceil((double) fileSize / pieceSize)) {
+            System.out.println("Saving file");
+            saveCompleteFile();
+        }
+    
+        System.out.println("Received and saved piece " + pieceIndex + " from " + socket.getRemoteSocketAddress());
+
+        sendRequestMessage(socket);
     }
+
+    private void sendHaveMessage(Socket socket, byte[] pieceIndex) {
+        sendMessage(socket, (byte) 4, pieceIndex);
+    }
+
+    private void handleHaveMessage(Socket socket, byte[] message) {
+        //TODO: this
+    }
+
 
     //Choking
 
@@ -561,29 +618,51 @@ public class PeerProcess {
     //Helper Functions
 
 
-    private byte[] readPieceData(int pieceIndex) {
-        File file = new File("./" + this.peerID + "/" + this.fileName);
-        byte[] pieceData;
+    public void initializeFileContents() {
+        fileContents = new HashMap<>();
+        String filePath = "./peer_" + peerID + "/" + fileName;
+        File file = new File(filePath);
     
-        try (RandomAccessFile raf = new RandomAccessFile(file, "r")) {
-            long offset = (long) pieceIndex * pieceSize;
-            raf.seek(offset);
+        try (FileInputStream fis = new FileInputStream(file)) {
+            int pieceIndex = 0;
+            byte[] buffer = new byte[pieceSize];
+            int bytesRead;
     
-            // Determine the size of the piece to read
-            long pieceLength = Math.min(pieceSize, fileSize - offset);
-            pieceData = new byte[(int) pieceLength];
+            while ((bytesRead = fis.read(buffer)) != -1) {
+                // If bytesRead is less than pieceSize, copy only the bytes read
+                byte[] actualData = bytesRead < pieceSize ? Arrays.copyOf(buffer, bytesRead) : buffer;
+                fileContents.put(pieceIndex, actualData);
+                pieceIndex++;
     
-            raf.readFully(pieceData);
+                // Reinitialize buffer if it's the last piece and it was smaller
+                if (bytesRead < pieceSize) {
+                    buffer = new byte[pieceSize];
+                }
+            }
         } catch (FileNotFoundException e) {
             System.err.println("File not found: " + e.getMessage());
-            return null;
         } catch (IOException e) {
-            System.err.println("IO Error while reading the piece data: " + e.getMessage());
-            return null;
+            System.err.println("IO Error while reading the file: " + e.getMessage());
         }
-    
-        return pieceData;
     }
     
-
+    public void saveCompleteFile() {
+        String outputFilePath = "./" + peerID + "/" + fileName; // Construct the file path
+    
+        try (FileOutputStream fileOutputStream = new FileOutputStream(outputFilePath)) {
+            for (int i = 0; i < fileContents.size(); i++) {
+                byte[] pieceData = fileContents.get(i);
+                if (pieceData != null) {
+                    fileOutputStream.write(pieceData);
+                } else {
+                    System.err.println("Missing piece " + i + ". Cannot save file.");
+                    return;
+                }
+            }
+            System.out.println("File has been successfully saved to " + outputFilePath);
+        } catch (IOException e) {
+            System.err.println("IO Error while saving the file: " + e.getMessage());
+        }
+    }
+    
 }
