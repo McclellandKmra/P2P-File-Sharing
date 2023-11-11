@@ -17,6 +17,8 @@ public class PeerProcess {
 
     private BitSet bitfield;
     private HashMap<Socket, BitSet> peerBitfields = new HashMap<>();
+    private List<Integer> requestedIndices = new ArrayList<>();
+
 
     private Map<Integer, PeerInfo> peers = new HashMap<>();
     private Map<Socket, Integer> peerIDs = new HashMap<>();
@@ -272,7 +274,7 @@ public class PeerProcess {
                     if (peers.get(peerID).hasFile) {
                         sendBitfieldMessage(socket);
                     }
-                    TCPLogMessage(this.peerID, currentPeerId);
+                    //TCPLogMessage(this.peerID, currentPeerId);
                 } catch (IOException e) {
                     System.err.println("Error connecting to peer " + currentPeerId + " at " + peerInfo.hostname + ":" + peerInfo.port);
                     e.printStackTrace();
@@ -311,6 +313,8 @@ public class PeerProcess {
             case 3: handleNotInterestedMessage(socket, message); break;
             case 2: handleInterestedMessage(socket, message); break;
             case 5: handleBitfieldMessage(socket, message); break;
+            case 6: handleRequestMessage(socket, message); break;
+            case 7: handlePieceMessage(socket, message); break;
         }
     }
 
@@ -438,7 +442,8 @@ public class PeerProcess {
 
     //TODO:
     private void handleUnchokeMessage(Socket socket, byte[] message) {
-        System.out.println("getting choked by " + socket.getRemoteSocketAddress());
+        sendRequestMessage(socket);
+        System.out.println("getting unchoked by " + socket.getRemoteSocketAddress());
     }
 
     private void sendChokeMessage(Socket socket) {
@@ -448,7 +453,68 @@ public class PeerProcess {
 
     //TODO:
     private void handleChokeMessage(Socket socket, byte[] message) {
-        System.out.println("getting unchoked by " + socket.getRemoteSocketAddress());
+        System.out.println("getting choked by " + socket.getRemoteSocketAddress());
+    }
+
+    private void sendRequestMessage(Socket socket) {
+        // Determine which pieces are available, needed, and not already requested
+        BitSet availablePieces = peerBitfields.get(socket);
+        BitSet neededPieces = (BitSet) bitfield.clone();
+        neededPieces.flip(0, neededPieces.size());
+
+        List<Integer> possibleRequests = new ArrayList<>();
+        for (int i = 0; i < availablePieces.length(); i++) {
+            if (availablePieces.get(i) && neededPieces.get(i) && !requestedIndices.contains(i)) {
+                possibleRequests.add(i);
+            }
+        }
+    
+        // If there are no pieces to request, return
+        //TODO: make sure this is the right action
+        if (possibleRequests.isEmpty()) {
+            return;
+        }
+    
+        int randomIndex = new Random().nextInt(possibleRequests.size());
+        int pieceToRequest = possibleRequests.get(randomIndex);
+    
+        requestedIndices.add(pieceToRequest);
+    
+        // Construct and send the request message for the selected piece
+        ByteBuffer buffer = ByteBuffer.allocate(4);
+        buffer.putInt(pieceToRequest);
+        sendMessage(socket, (byte) 6, buffer.array());
+    
+        System.out.println("Sent request message for piece " + pieceToRequest + " to " + socket.getRemoteSocketAddress());
+    }
+
+    private void handleRequestMessage(Socket socket, byte[] message) {
+        int pieceIndex = ByteBuffer.wrap(Arrays.copyOfRange(message, 5, message.length)).getInt();
+        System.out.println("Received request message for piece " + pieceIndex + " from " + socket.getRemoteSocketAddress());
+
+        // Check if the piece is available
+        if (bitfield.get(pieceIndex)) {
+            // If the piece is available, read its data and send it
+            byte[] pieceData = readPieceData(pieceIndex);
+            sendPieceMessage(socket, pieceIndex, pieceData);
+        } else {
+            // Handle the case where the requested piece is not available
+            System.out.println("ERROR: Piece " + pieceIndex + " is not available.");
+        }
+    }
+
+    private void sendPieceMessage(Socket socket, int pieceIndex, byte[] pieceData) {
+        ByteBuffer buffer = ByteBuffer.allocate(4 + pieceData.length);
+        buffer.putInt(pieceIndex); // Piece index
+        buffer.put(pieceData); // Piece data
+    
+        // Send the buffer array
+        sendMessage(socket, (byte)7, buffer.array());
+        System.out.println("Sent piece " + pieceIndex + " to " + socket.getRemoteSocketAddress());
+    }
+
+    private void handlePieceMessage(Socket socket, byte[] message) {
+
     }
 
     //Choking
@@ -456,8 +522,8 @@ public class PeerProcess {
     public void unchokingInterval() {
         while (true) { // Infinite loop to keep checking at regular intervals
             preferredNeighbors.clear();
-            if (peers.get(peerID).hasFile) { //choose preferred neighbors randomly
-                List<Socket> interested = new ArrayList<>(interestedPeers); // Assuming you have this list from before
+            if (peers.get(peerID).hasFile) { //choose preferred neighbors randomly if you have the complete file
+                List<Socket> interested = new ArrayList<>(interestedPeers);
                 Collections.shuffle(interested);
                 
                 preferredNeighbors.clear();
@@ -491,138 +557,33 @@ public class PeerProcess {
         }
     }
 
+    
+    //Helper Functions
 
-    public void TCPLogMessage(int peerID1, int peerID2) {
-        String filepath = "log_peer_" + peerID2 + ".log";
-        Date date = new Date();
-        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        String dateString = formatter.format(date);
-        try(BufferedWriter writer = new BufferedWriter(new FileWriter(filepath, true))) {
-            writer.write(dateString + ": Peer " + peerID1 + " makes a connection to Peer " + peerID2 + ".");
-            writer.newLine();
+
+    private byte[] readPieceData(int pieceIndex) {
+        File file = new File("./" + this.peerID + "/" + this.fileName);
+        byte[] pieceData;
+    
+        try (RandomAccessFile raf = new RandomAccessFile(file, "r")) {
+            long offset = (long) pieceIndex * pieceSize;
+            raf.seek(offset);
+    
+            // Determine the size of the piece to read
+            long pieceLength = Math.min(pieceSize, fileSize - offset);
+            pieceData = new byte[(int) pieceLength];
+    
+            raf.readFully(pieceData);
+        } catch (FileNotFoundException e) {
+            System.err.println("File not found: " + e.getMessage());
+            return null;
         } catch (IOException e) {
-            e.printStackTrace();
+            System.err.println("IO Error while reading the piece data: " + e.getMessage());
+            return null;
         }
+    
+        return pieceData;
     }
+    
 
-    //Whenever a peer changes its preferred neighbors, it generates the following log message, taking in the peer and its preferred neighbors
-    public void changeOfNeighborsLogMessage(int peerID, List<Integer> preferredNeighbors) {
-        String filepath = "log_peer_" + peerID + ".log";
-        Date date = new Date();
-        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        String dateString = formatter.format(date);
-        try(BufferedWriter writer = new BufferedWriter(new FileWriter(filepath, true))) {
-            writer.write(dateString + ": Peer " + peerID + " has the preferred neighbors ");
-            for (int i = 0; i < preferredNeighbors.size(); i++) {
-                writer.write(preferredNeighbors.get(i) + ", ");
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-    }
-
-    public void changeOfOptNeighborsLogMessage(int peerID, int optNeighbor) {
-        String filepath = "log_peer_" + peerID + ".log";
-        Date date = new Date();
-        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        String dateString = formatter.format(date);
-        try(BufferedWriter writer = new BufferedWriter(new FileWriter(filepath, true))) {
-            writer.write(dateString + ": Peer " + peerID + " has the optimistically unchoked neighbor " + optNeighbor + ".");
-            writer.newLine();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void unchokeLogMessage(int peerID1, int peerID2) {
-        String filepath = "log_peer_" + peerID1 + ".log";
-        Date date = new Date();
-        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        String dateString = formatter.format(date);
-        try(BufferedWriter writer = new BufferedWriter(new FileWriter(filepath, true))) {
-            writer.write(dateString + ": Peer " + peerID1 + " is unchoked by " + peerID2 + ".");
-            writer.newLine();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void chokeLogMessage(int peerID1, int peerID2) {
-        String filepath = "log_peer_" + peerID1 + ".log";
-        Date date = new Date();
-        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        String dateString = formatter.format(date);
-        try(BufferedWriter writer = new BufferedWriter(new FileWriter(filepath, true))) {
-            writer.write(dateString + ": Peer " + peerID1 + " is choked by " + peerID2 + ".");
-            writer.newLine();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void haveLogMessage(int peerID1, int peerID2, int pieceIndex) {
-        String filepath = "log_peer_" + peerID1 + ".log";
-        Date date = new Date();
-        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        String dateString = formatter.format(date);
-        try(BufferedWriter writer = new BufferedWriter(new FileWriter(filepath, true))) {
-            writer.write(dateString + ": Peer " + peerID1 + " received the 'have' message from " + peerID2 + " for the piece " + pieceIndex + ".");
-            writer.newLine();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void interestedLogMessage(int peerID1, int peerID2) {
-        String filepath = "log_peer_" + peerID1 + ".log";
-        Date date = new Date();
-        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        String dateString = formatter.format(date);
-        try(BufferedWriter writer = new BufferedWriter(new FileWriter(filepath, true))) {
-            writer.write(dateString + ": Peer " + peerID1 + " received the 'interested' message from " + peerID2 + ".");
-            writer.newLine();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }  
-
-    public void notInterestedLogMessage(int peerID1, int peerID2) {
-        String filepath = "log_peer_" + peerID1 + ".log";
-        Date date = new Date();
-        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        String dateString = formatter.format(date);
-        try(BufferedWriter writer = new BufferedWriter(new FileWriter(filepath, true))) {
-            writer.write(dateString + ": Peer " + peerID1 + " received the 'not interested' message from " + peerID2 + ".");
-            writer.newLine();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void pieceDownloadedLogMessage(int peerID1, int peerID2, int pieceIndex, int numPieces) {
-        String filepath = "log_peer_" + peerID1 + ".log";
-        Date date = new Date();
-        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        String dateString = formatter.format(date);
-        try(BufferedWriter writer = new BufferedWriter(new FileWriter(filepath, true))) {
-            writer.write(dateString + ": Peer " + peerID1 + " has downloaded the piece " + pieceIndex + " from " + peerID2 + ". Now the number of pieces it has is " + numPieces + ".");
-            writer.newLine();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void fileDownloadedLogMessage(int peerID) {
-        String filepath = "log_peer_" + peerID + ".log";
-        Date date = new Date();
-        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        String dateString = formatter.format(date);
-        try(BufferedWriter writer = new BufferedWriter(new FileWriter(filepath, true))) {
-            writer.write(dateString + ": Peer " + peerID + " has downloaded the complete file.");
-            writer.newLine();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
 }
