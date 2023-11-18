@@ -287,8 +287,9 @@ public class PeerProcess {
         switch(messageType) {
             case 0: handleChokeMessage(socket, message); break;
             case 1: handleUnchokeMessage(socket, message); break;
-            case 3: handleNotInterestedMessage(socket, message); break;
             case 2: handleInterestedMessage(socket, message); break;
+            case 3: handleNotInterestedMessage(socket, message); break;
+            case 4: handleHaveMessage(socket, message); break;
             case 5: handleBitfieldMessage(socket, message); break;
             case 6: handleRequestMessage(socket, message); break;
             case 7: handlePieceMessage(socket, message); break;
