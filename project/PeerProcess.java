@@ -6,7 +6,7 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 
 public class PeerProcess {
-    public Thread t1, t2;
+    public Thread t1, t2; // t1 = listener thread for incoming connections, t2 = thread for calculating unchoking interval
     private int numberOfPreferredNeighbors;
     private int unchokingInterval;
     private int optimisticUnchokingInterval;
@@ -75,9 +75,6 @@ public class PeerProcess {
         //connect to relevant peer processes
     }
 
-    //Constructor for the class
-    //Takes in the peerID and reads the Common.cfg and PeerInfo.cfg files
-    //Initializes the commonConfig and peerInfoList variables
     public PeerProcess(int peerID) {
         this.peerID = peerID;
         try {
@@ -88,38 +85,31 @@ public class PeerProcess {
         }
     }
 
-    //reads and stores data from Common.cfg
     public void readCommon() throws IOException {
+        /* reads and stores data from Common.cfg */
+
         try (BufferedReader reader = new BufferedReader(new FileReader("Common.cfg"))) {
             String line;
             while ((line = reader.readLine()) != null) {
                 String[] parts = line.split(" ");
                 String key = parts[0];
                 String value = parts[1];
-                //Sets the appropriate variables based on the key
                 switch (key) {
-                    //Number of preferred neighbors for a peer to have
                     case "NumberOfPreferredNeighbors":
                         numberOfPreferredNeighbors = Integer.parseInt(value);
                         break;
-                    //The time interval (seconds) between unchoking events
                     case "UnchokingInterval":
                         unchokingInterval = Integer.parseInt(value);
                         break;
-                    //The time interval (seconds) between optimistic unchoking events
                     case "OptimisticUnchokingInterval":
                         optimisticUnchokingInterval = Integer.parseInt(value);
                         break;
-                    //The name of the file to be distributed
                     case "FileName":
                         fileName = value;
                         break;
-                    //The size of the file to be distributed (in bytes)
                     case "FileSize":
                         fileSize = Integer.parseInt(value);
                         break;
-                    //The size of the piece (in bytes) that the file is divided into
-                    //Pieces of the last piece may be smaller than this size
                     case "PieceSize":
                         pieceSize = Integer.parseInt(value);
                         break;
@@ -128,9 +118,9 @@ public class PeerProcess {
         }
     }
 
-    //Reads and stores data from PeerInfo.cfg
-    //Includes peerID, host name, port number, and whether or not the peer has the file
     public void readPeerInfo() throws IOException {
+        /* Reads and stores info from peerInfo.cfg */
+
         try (BufferedReader reader = new BufferedReader(new FileReader("PeerInfo.cfg"))) {
             String line;
             while ((line = reader.readLine()) != null) {
@@ -181,8 +171,9 @@ public class PeerProcess {
         }
     }
     
-    //Starts a server socket on the peer's listening port
     public void startServer() {
+        /* Starts a server on this peer's listening port to accept incoming connections */
+
         //Get the PeerInfo object for this peer
         PeerInfo currentPeer = peers.get(peerID);
 
@@ -217,60 +208,9 @@ public class PeerProcess {
         }
     }
 
-    //Responsible for sending handshake messages to peers over a socket
-    //Creates a handshake message by concatenating a header string ("P2PFILESHARINGPROJ"), 10 zero bits, and the local peer's ID as a 4-byte integer
-    public void sendHandshake(Socket socket) {
-        try {
-            ObjectOutputStream out = objectOutputStreams.get(socket);
-            
-            // Format message
-            String header = "P2PFILESHARINGPROJ";
-            byte[] zeroBits = new byte[10];
-            byte[] peerIDBytes = ByteBuffer.allocate(4).putInt(peerID).array();
-    
-            // Create handshake message
-            ByteArrayOutputStream handshakeMsg = new ByteArrayOutputStream();
-            handshakeMsg.write(header.getBytes());
-            handshakeMsg.write(zeroBits);
-            handshakeMsg.write(peerIDBytes);
-    
-            // Send handshake message
-            out.writeObject(handshakeMsg.toByteArray());
-        } 
-        catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-    
-    //Responsible for receiving handshake messages from peers over a socket
-    public void receiveHandshake(Socket socket) {
-        try {
-            ObjectInputStream in = objectInputStreams.get(socket);
-    
-            //Read the handshake message bytes
-            byte[] handshakeBytes = (byte[]) in.readObject();
-    
-            //Parse the handshake
-            String header = new String(handshakeBytes, 0, 18);
-            //Validates the header
-            if (!header.equals("P2PFILESHARINGPROJ")) {
-                throw new IllegalArgumentException("Invalid handshake header");
-            }
-    
-            // Extract peer ID from the last 4 bytes
-            int receivedPeerID = ByteBuffer.wrap(handshakeBytes, 28, 4).getInt();
-
-            //log the message
-            System.out.println("received handshake from " + receivedPeerID);
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            return;
-        }
-    }
-
-    //Responsible for connecting to peers with a lower peer ID
     public void connectToServers() {
+        /* Sends connection requests to each peer initalized before it. This is where the initial exchange of messages starts */
+
         // Iterate over each peer from the peers map
         for (Map.Entry<Integer, PeerInfo> entry : peers.entrySet()) {
             int currentPeerId = entry.getKey();
@@ -310,6 +250,12 @@ public class PeerProcess {
     }
     
     public void listenForMessages(Socket socket) {
+        /* Listens for incoming messages from a socket and calls the handler when one is recieved. Each peer has a thread listening for messages from each other
+         * peer, so it can accept messages and handle them at any time.
+         * 
+         * TODO: Currently prints the stack trace if an exception is thrown, but this should be either changed or verified it is correct in the future.
+         */
+
         try {
             ObjectInputStream in = objectInputStreams.get(socket);
             
@@ -331,7 +277,12 @@ public class PeerProcess {
         }
     }
 
+
+    // Messages
+
     public void handleMessage(Socket socket, byte[] message) {
+        /* Calls the appropriate handler for a message type */
+
         int messageType = Byte.toUnsignedInt(message[4]);
         switch(messageType) {
             case 0: handleChokeMessage(socket, message); break;
@@ -341,6 +292,82 @@ public class PeerProcess {
             case 5: handleBitfieldMessage(socket, message); break;
             case 6: handleRequestMessage(socket, message); break;
             case 7: handlePieceMessage(socket, message); break;
+        }
+    }
+
+    public void sendMessage(Socket socket, byte messageType, byte[] payload) {
+        /* Formats and sends the message to the given socket */
+
+        try {
+            ObjectOutputStream out = objectOutputStreams.get(socket);
+    
+            // Determine message length
+            int messageLength = (payload != null) ? payload.length + 1 : 1;
+    
+            // Create message
+            ByteBuffer messageBuffer = ByteBuffer.allocate(4 + messageLength);
+            messageBuffer.putInt(messageLength);
+            messageBuffer.put(messageType);
+            if (payload != null) {
+                messageBuffer.put(payload);
+            }
+    
+            // Send message
+            out.writeObject(messageBuffer.array());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void sendHandshake(Socket socket) {
+        /* Creates the handshake message and sends it over the socket */
+
+        try {
+            ObjectOutputStream out = objectOutputStreams.get(socket);
+            
+            // Format message
+            String header = "P2PFILESHARINGPROJ";
+            byte[] zeroBits = new byte[10];
+            byte[] peerIDBytes = ByteBuffer.allocate(4).putInt(peerID).array();
+    
+            // Create handshake message
+            ByteArrayOutputStream handshakeMsg = new ByteArrayOutputStream();
+            handshakeMsg.write(header.getBytes());
+            handshakeMsg.write(zeroBits);
+            handshakeMsg.write(peerIDBytes);
+    
+            // Send handshake message
+            out.writeObject(handshakeMsg.toByteArray());
+        } 
+        catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+    
+    public void receiveHandshake(Socket socket) {
+
+        try {
+            ObjectInputStream in = objectInputStreams.get(socket);
+    
+            //Read the handshake message bytes
+            byte[] handshakeBytes = (byte[]) in.readObject();
+    
+            //Parse the handshake
+            String header = new String(handshakeBytes, 0, 18);
+            //Validates the header
+            if (!header.equals("P2PFILESHARINGPROJ")) {
+                throw new IllegalArgumentException("Invalid handshake header");
+            }
+    
+            // Extract peer ID from the last 4 bytes
+            int receivedPeerID = ByteBuffer.wrap(handshakeBytes, 28, 4).getInt();
+
+            //log the message
+            System.out.println("received handshake from " + receivedPeerID);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return;
         }
     }
 
@@ -375,30 +402,8 @@ public class PeerProcess {
         }
     }
       
-    public void sendMessage(Socket socket, byte messageType, byte[] payload) {
-        try {
-            ObjectOutputStream out = objectOutputStreams.get(socket);
-    
-            // Determine message length
-            int messageLength = (payload != null) ? payload.length + 1 : 1;
-    
-            // Create message
-            ByteBuffer messageBuffer = ByteBuffer.allocate(4 + messageLength);
-            messageBuffer.putInt(messageLength);
-            messageBuffer.put(messageType);
-            if (payload != null) {
-                messageBuffer.put(payload);
-            }
-    
-            // Send message
-            out.writeObject(messageBuffer.array());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
     public void sendBitfieldMessage(Socket socket) {
-        //TODO: use send message function
+        //TODO: use send message function to actually send the bitfield
         try {
             ObjectOutputStream out = objectOutputStreams.get(socket);
             
@@ -416,29 +421,6 @@ public class PeerProcess {
         } catch (IOException e) {
             e.printStackTrace();
         }
-    }
-
-    private byte[] bitsetToByteArray(BitSet bitset) {
-        int byteCount = (bitset.length() + 7) / 8; // This ensures rounding up if not a multiple of 8
-        byte[] bytes = new byte[byteCount];
-
-        for (int i = 0; i < bitset.length(); i++) {
-            if (bitset.get(i)) {
-                bytes[i / 8] |= 1 << (7 - i % 8); // Set the specific bit in the byte
-            }
-        }
-        return bytes;
-    }
-
-    private BitSet byteArrayToBitset(byte[] bytes) {
-        BitSet bitset = new BitSet(bytes.length * 8);
-        
-        for (int i = 0; i < bytes.length * 8; i++) {
-            if ((bytes[i / 8] & (1 << (7 - i % 8))) != 0) {
-                bitset.set(i);
-            }
-        }
-        return bitset;
     }
 
     private void sendNotInterestedMessage(Socket socket) {
@@ -570,13 +552,32 @@ public class PeerProcess {
     }
 
     private void handleHaveMessage(Socket socket, byte[] message) {
-        //TODO: this
+        //TODO: Make sure this is accurate
+
+        int pieceIndex = ByteBuffer.wrap(Arrays.copyOfRange(message, 5, message.length)).getInt();
+
+        // Retrieve the bitfield for the corresponding peer
+        BitSet peerBitfield = peerBitfields.get(socket);
+        if (peerBitfield == null) {
+            peerBitfield = new BitSet(); // Create a new BitSet if it does not exist
+        }
+    
+        // Set the bit for the received piece index
+        peerBitfield.set(pieceIndex);
+    
+        // Update the peerBitfields map
+        peerBitfields.put(socket, peerBitfield);
+    
+        System.out.println("Peer " + peerIDs.get(socket) + " has piece " + pieceIndex);
     }
 
 
     //Choking
 
+
     public void unchokingInterval() {
+        /* Every choking interval of time, recalculates unchoked neighbors and chokes other neighbors */
+
         while (true) { // Infinite loop to keep checking at regular intervals
             preferredNeighbors.clear();
             if (peers.get(peerID).hasFile) { //choose preferred neighbors randomly if you have the complete file
@@ -664,5 +665,29 @@ public class PeerProcess {
             System.err.println("IO Error while saving the file: " + e.getMessage());
         }
     }
+
+    private byte[] bitsetToByteArray(BitSet bitset) {
+        int byteCount = (bitset.length() + 7) / 8; // This ensures rounding up if not a multiple of 8
+        byte[] bytes = new byte[byteCount];
+
+        for (int i = 0; i < bitset.length(); i++) {
+            if (bitset.get(i)) {
+                bytes[i / 8] |= 1 << (7 - i % 8); // Set the specific bit in the byte
+            }
+        }
+        return bytes;
+    }
+
+    private BitSet byteArrayToBitset(byte[] bytes) {
+        BitSet bitset = new BitSet(bytes.length * 8);
+        
+        for (int i = 0; i < bytes.length * 8; i++) {
+            if ((bytes[i / 8] & (1 << (7 - i % 8))) != 0) {
+                bitset.set(i);
+            }
+        }
+        return bitset;
+    }
+
     
 }
