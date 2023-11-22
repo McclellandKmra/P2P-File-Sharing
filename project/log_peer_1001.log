@@ -1,1 +1,6 @@
-2023-11-22 14:43:43: Peer 1002 makes a connection to Peer 1001.
+2023-11-22 16:08:27: Peer 1002 makes a connection to Peer 1001.
+2023-11-22 16:08:28: Peer 1001 has the preferred neighbors 1002, 2023-11-22 16:15:41: Peer 1002 makes a connection to Peer 1001.
+2023-11-22 16:15:42: Peer 1001 has the preferred neighbors 1002, 2023-11-22 16:16:33: Peer 1002 makes a connection to Peer 1001.
+2023-11-22 16:16:38: Peer 1001 has the preferred neighbors 1002, 2023-11-22 16:16:38: Peer 1001 has the optimistically unchoked neighbor 1002.
+2023-11-22 16:23:37: Peer 1002 makes a connection to Peer 1001.
+2023-11-22 16:23:40: Peer 1001 has the preferred neighbors 1002, 2023-11-22 16:23:40: Peer 1001 has the optimistically unchoked neighbor 1002.

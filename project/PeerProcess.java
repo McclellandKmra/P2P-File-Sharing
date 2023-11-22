@@ -4,6 +4,7 @@ import java.nio.*;
 import java.nio.channels.*;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class PeerProcess {
     public Thread t1, t2; // t1 = listener thread for incoming connections, t2 = thread for calculating unchoking interval
@@ -289,6 +290,9 @@ public class PeerProcess {
         } catch (EOFException e) {
             // The other end has probably closed the connection.
             System.out.println("Connection closed by " + socket.getRemoteSocketAddress());
+        } catch (SocketException e) {
+            System.err.println("SocketException: Connection reset. Attempting to reconnect...");
+            // Implement reconnection logic here if appropriate
         } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
         } finally {
@@ -385,7 +389,7 @@ public class PeerProcess {
     
             // Extract peer ID from the last 4 bytes
             int receivedPeerID = ByteBuffer.wrap(handshakeBytes, 28, 4).getInt();
-
+            peerIDs.put(socket, receivedPeerID);
             //log the message
             System.out.println("received handshake from " + receivedPeerID);
 
@@ -449,6 +453,7 @@ public class PeerProcess {
 
     private void sendNotInterestedMessage(Socket socket) {
         sendMessage(socket, (byte) 3, null);
+        log.notInterestedLogMessage(peerID, peerIDs.get(socket));
     }
 
     private void handleNotInterestedMessage(Socket socket, byte[] message) {
@@ -459,6 +464,7 @@ public class PeerProcess {
 
     private void sendInterestedMessage(Socket socket) {
         sendMessage(socket, (byte) 2, null);
+        log.interestedLogMessage(peerID, peerIDs.get(socket));
     }
 
     private void handleInterestedMessage(Socket socket, byte[] message) {
@@ -718,6 +724,9 @@ public class PeerProcess {
     }
 
     private void managePreferredNeighbors() {
+
+    List<Integer> oldPreferredNeighbors = getPeerIDs(preferredNeighbors); // Capture old preferred neighbors before updating
+
         if (peers.get(peerID).hasFile) {
             // If peer has the complete file, select preferred neighbors randomly
             selectPreferredNeighborsRandomly();
@@ -726,6 +735,17 @@ public class PeerProcess {
             selectPreferredNeighborsBasedOnRate();
         }
         chokeNonPreferredNeighbors();
+
+        List<Integer> newPreferredNeighbors = getPeerIDs(preferredNeighbors); // Capture new preferred neighbors after updating
+        if (!oldPreferredNeighbors.equals(newPreferredNeighbors)) {
+            if (!newPreferredNeighbors.isEmpty()) {
+                log.changeOfNeighborsLogMessage(peerID, newPreferredNeighbors);
+            }
+        }
+    }
+
+    private List<Integer> getPeerIDs(List<Socket> sockets) {
+        return sockets.stream().map(peerIDs::get).collect(Collectors.toList());
     }
     
     private void selectPreferredNeighborsRandomly() {
@@ -737,6 +757,7 @@ public class PeerProcess {
             preferredNeighbors.add(neighbor);
             unchoke(neighbor);
         }
+        
     }
 
     private void selectPreferredNeighborsBasedOnRate() {
@@ -766,6 +787,9 @@ public class PeerProcess {
             Collections.shuffle(chokedInterestedPeers);
             Socket optimisticallyUnchoked = chokedInterestedPeers.get(0);
             unchoke(optimisticallyUnchoked);
+
+            int optimisticallyUnchokedPeerID = peerIDs.get(optimisticallyUnchoked);
+            log.changeOfOptNeighborsLogMessage(peerID, optimisticallyUnchokedPeerID);
         }
     }
 
