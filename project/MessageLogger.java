@@ -1,5 +1,12 @@
+import java.nio.channels.*;
+import java.text.SimpleDateFormat;
+import java.util.*;
+import java.net.*;
+import java.io.*;
+import java.nio.*;
+
 public class MessageLogger {
-    /* 
+    
     public void TCPLogMessage(int peerID1, int peerID2) {
         String filepath = "log_peer_" + peerID2 + ".log";
         Date date = new Date();
@@ -133,5 +140,5 @@ public class MessageLogger {
             e.printStackTrace();
         }
     }
-    */
+    
 }

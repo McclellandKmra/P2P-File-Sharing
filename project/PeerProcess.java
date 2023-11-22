@@ -33,6 +33,8 @@ public class PeerProcess {
 
     private List<Thread> listenerThreads = new ArrayList<>();
 
+    MessageLogger log = new MessageLogger();
+
     public class PeerInfo {
         int peerID;
         String hostname;
@@ -240,7 +242,8 @@ public class PeerProcess {
                     if (peers.get(peerID).hasFile) {
                         sendBitfieldMessage(socket);
                     }
-                    //TCPLogMessage(this.peerID, currentPeerId);
+                    
+                    log.TCPLogMessage(this.peerID, currentPeerId);
                 } catch (IOException e) {
                     System.err.println("Error connecting to peer " + currentPeerId + " at " + peerInfo.hostname + ":" + peerInfo.port);
                     e.printStackTrace();
