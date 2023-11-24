@@ -1,2 +1,19 @@
 2023-11-22 16:08:32: Peer 1002 has the preferred neighbors 1001, 2023-11-22 16:15:46: Peer 1002 has the preferred neighbors 1001, 2023-11-22 16:16:39: Peer 1002 has the preferred neighbors 1001, 2023-11-22 16:23:37: Peer 1002 received the 'interested' message from 1001.
-2023-11-22 16:23:42: Peer 1002 has the preferred neighbors 1001, 
+2023-11-22 16:23:42: Peer 1002 has the preferred neighbors 1001, 2023-11-24 14:55:04: Peer 1002 received the 'interested' message from 1001.
+2023-11-24 15:00:05: Peer 1002 received the 'interested' message from 1001.
+2023-11-24 15:01:26: Peer 1002 received the 'interested' message from 1001.
+2023-11-24 15:08:28: Peer 1002 has the optimistically unchoked neighbor 1001.
+2023-11-24 15:08:28: Peer 1002 has the preferred neighbors 1001, 2023-11-24 15:09:02: Peer 1002 has the optimistically unchoked neighbor 1001.
+2023-11-24 15:09:02: Peer 1002 has the preferred neighbors 1001, 2023-11-24 15:09:55: Peer 1002 received the 'interested' message from 1001.
+2023-11-24 15:13:56: Peer 1002 received the 'interested' message from 1001.
+2023-11-24 15:14:56: Peer 1002 received the 'interested' message from 1001.
+2023-11-24 15:15:01: Peer 1002 has the preferred neighbors 1001, 2023-11-24 15:22:08: Peer 1002 received the 'interested' message from 1001.
+2023-11-24 15:22:37: Peer 1002 received the 'interested' message from 1001.
+2023-11-24 15:23:05: Peer 1002 received the 'interested' message from 1001.
+2023-11-24 15:23:47: Peer 1002 received the 'interested' message from 1001.
+2023-11-24 15:25:14: Peer 1002 received the 'interested' message from 1001.
+2023-11-24 15:25:19: Peer 1002 has the preferred neighbors 1001, 2023-11-24 15:25:41: Peer 1002 received the 'interested' message from 1001.
+2023-11-24 15:25:47: Peer 1002 has the preferred neighbors 1001, 2023-11-24 15:28:23: Peer 1002 received the 'interested' message from 1001.
+2023-11-24 15:28:28: Peer 1002 has the preferred neighbors 1001, 2023-11-24 15:31:05: Peer 1002 received the 'interested' message from 1001.
+2023-11-24 15:32:44: Peer 1002 received the 'interested' message from 1001.
+2023-11-24 15:32:49: Peer 1002 has the preferred neighbors 1001, 

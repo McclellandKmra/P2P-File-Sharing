@@ -23,6 +23,8 @@ public class PeerProcess {
     private List<Integer> requestedIndices = new ArrayList<>();
     private Map<Integer, byte[]> fileContents;
 
+    private Map<Socket, Boolean> isUnchoked = new HashMap<>();
+    private Map<Socket, Boolean> isChoked = new HashMap<>();
 
     private Map<Integer, PeerInfo> peers = new HashMap<>();
     private Map<Socket, Integer> peerIDs = new HashMap<>();
@@ -480,6 +482,8 @@ public class PeerProcess {
 
     //TODO:
     private void handleUnchokeMessage(Socket socket, byte[] message) {
+        isUnchoked.put(socket, true);
+        isChoked.put(socket, false);
         sendRequestMessage(socket);
         System.out.println("getting unchoked by " + socket.getRemoteSocketAddress());
     }
@@ -491,6 +495,8 @@ public class PeerProcess {
 
     //TODO:
     private void handleChokeMessage(Socket socket, byte[] message) {
+        isUnchoked.put(socket, false);
+        isChoked.put(socket, true);
         System.out.println("getting choked by " + socket.getRemoteSocketAddress());
     }
 
