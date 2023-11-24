@@ -462,6 +462,7 @@ public class PeerProcess {
         interestedPeers.remove(socket);
         //TODO: handle not interested message and log
         System.out.println("received not interested message from " + socket.getRemoteSocketAddress());
+        log.notInterestedLogMessage(peerID, peerIDs.get(socket));
     }
 
     private void sendInterestedMessage(Socket socket) {
@@ -583,6 +584,7 @@ public class PeerProcess {
         }
     
         System.out.println("Received and saved piece " + pieceIndex + " from " + socket.getRemoteSocketAddress());
+        log.haveLogMessage(this.peerID, peerIDs.get(socket), pieceIndex);
 
         sendRequestMessage(socket);
     }
@@ -657,35 +659,6 @@ public class PeerProcess {
 
     
     //Helper Functions
-
-
-    public void initializeFileContents() {
-        fileContents = new HashMap<>();
-        String filePath = "./peer_" + peerID + "/" + fileName;
-        File file = new File(filePath);
-    
-        try (FileInputStream fis = new FileInputStream(file)) {
-            int pieceIndex = 0;
-            byte[] buffer = new byte[pieceSize];
-            int bytesRead;
-    
-            while ((bytesRead = fis.read(buffer)) != -1) {
-                // If bytesRead is less than pieceSize, copy only the bytes read
-                byte[] actualData = bytesRead < pieceSize ? Arrays.copyOf(buffer, bytesRead) : buffer;
-                fileContents.put(pieceIndex, actualData);
-                pieceIndex++;
-    
-                // Reinitialize buffer if it's the last piece and it was smaller
-                if (bytesRead < pieceSize) {
-                    buffer = new byte[pieceSize];
-                }
-            }
-        } catch (FileNotFoundException e) {
-            System.err.println("File not found: " + e.getMessage());
-        } catch (IOException e) {
-            System.err.println("IO Error while reading the file: " + e.getMessage());
-        }
-    }
     
     public void saveCompleteFile() {
         String outputFilePath = "./" + peerID + "/" + fileName; // Construct the file path
