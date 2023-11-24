@@ -427,11 +427,11 @@ public class PeerProcess {
 
 
         
-        // if (missingPieces.isEmpty()) {
-        //     sendNotInterestedMessage(socket);
-        // } else {
-        //     sendInterestedMessage(socket);
-        // }
+        if (missingPieces.isEmpty()) {
+            sendNotInterestedMessage(socket);
+        } else {
+            sendInterestedMessage(socket);
+        }
     }
       
     public void sendBitfieldMessage(Socket socket) {
@@ -602,10 +602,12 @@ public class PeerProcess {
             saveCompleteFile();
         }
 
-        checkAndSendNotInterestedMessages();
+        
     
         System.out.println("Received and saved piece " + pieceIndex + " from " + socket.getRemoteSocketAddress());
         log.haveLogMessage(this.peerID, peerIDs.get(socket), pieceIndex);
+
+        checkAndSendNotInterestedMessages();
 
         sendRequestMessage(socket);
     }
