@@ -424,12 +424,14 @@ public class PeerProcess {
         // Check if the received bitfield has pieces that this peer doesn't have
         BitSet missingPieces = (BitSet) receivedBitfield.clone();
         missingPieces.andNot(this.bitfield);
+
+
         
-        if (missingPieces.isEmpty()) {
-            sendNotInterestedMessage(socket);
-        } else {
-            sendInterestedMessage(socket);
-        }
+        // if (missingPieces.isEmpty()) {
+        //     sendNotInterestedMessage(socket);
+        // } else {
+        //     sendInterestedMessage(socket);
+        // }
     }
       
     public void sendBitfieldMessage(Socket socket) {
@@ -462,7 +464,6 @@ public class PeerProcess {
         interestedPeers.remove(socket);
         //TODO: handle not interested message and log
         System.out.println("received not interested message from " + socket.getRemoteSocketAddress());
-        log.notInterestedLogMessage(peerID, peerIDs.get(socket));
     }
 
     private void sendInterestedMessage(Socket socket) {
@@ -475,6 +476,24 @@ public class PeerProcess {
         //TODO: handle interested messaage and log
         System.out.println("received interested message from " + socket.getRemoteSocketAddress());
     }
+
+    private void checkAndSendNotInterestedMessages() {
+        for (Socket peerSocket : connections) {
+            BitSet peerBitfield = peerBitfields.get(peerSocket);
+            if (!isInterested(bitfield, peerBitfield)) {
+                sendNotInterestedMessage(peerSocket);
+            }
+        }
+    }
+    
+    // New helper method to determine if still interested in a peer
+    private boolean isInterested(BitSet myBitfield, BitSet peerBitfield) {
+        BitSet temp = (BitSet) peerBitfield.clone();
+        temp.andNot(myBitfield);
+        return !temp.isEmpty();
+    }
+
+    
 
     private void sendUnchokeMessage(Socket socket) {
         sendMessage(socket, (byte) 1, null);
@@ -577,11 +596,13 @@ public class PeerProcess {
 
         requestedIndices.remove(Integer.valueOf(pieceIndex));
 
-        //TODO: logic for if it has the whole file
+        //TODO: logic for if it has the wholse file
         if (fileContents.size() == Math.ceil((double) fileSize / pieceSize)) {
             System.out.println("Saving file");
             saveCompleteFile();
         }
+
+        checkAndSendNotInterestedMessages();
     
         System.out.println("Received and saved piece " + pieceIndex + " from " + socket.getRemoteSocketAddress());
         log.haveLogMessage(this.peerID, peerIDs.get(socket), pieceIndex);
@@ -609,6 +630,8 @@ public class PeerProcess {
     
         // Update the peerBitfields map
         peerBitfields.put(socket, peerBitfield);
+
+        checkAndSendNotInterestedMessages();
     
         System.out.println("Peer " + peerIDs.get(socket) + " has piece " + pieceIndex);
     }
