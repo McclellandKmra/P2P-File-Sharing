@@ -262,9 +262,9 @@ public class PeerProcess {
                     Thread listenerThread = new Thread(() -> listenForMessages(socket));
                     listenerThread.start();
                     listenerThreads.add(listenerThread);
-                    if (peers.get(peerID).hasFile) {
-                        sendBitfieldMessage(socket);
-                    }
+
+                    //peers without the file may skip the bitfield, but all peers exchange bitfields for consistency. 
+                    sendBitfieldMessage(socket);
                     
                     log.TCPLogMessage(this.peerID, currentPeerId);
                 } catch (IOException e) {
@@ -419,7 +419,7 @@ public class PeerProcess {
         }
     
         // Print the received bitfield
-        System.out.println("Received bitfield from " + socket.getRemoteSocketAddress() + ": " + bitfieldString.toString());
+        System.out.println("Received bitfield from " + peerIDs.get(socket));
         
         // Check if the received bitfield has pieces that this peer doesn't have
         BitSet missingPieces = (BitSet) receivedBitfield.clone();
@@ -569,9 +569,18 @@ public class PeerProcess {
 
     private void sendPieceMessage(Socket socket, int pieceIndex, byte[] pieceData) {
         ByteBuffer buffer = ByteBuffer.allocate(4 + pieceData.length);
-        buffer.putInt(pieceIndex); // Piece index
-        buffer.put(pieceData); // Piece data
-    
+        buffer.putInt(pieceIndex);
+        buffer.put(pieceData);
+
+
+        //TODO: Temporary code to allow multiple instances on same device
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+
         // Send the buffer array
         sendMessage(socket, (byte)7, buffer.array());
         System.out.println("Sent piece " + pieceIndex + " to " + socket.getRemoteSocketAddress());
@@ -605,10 +614,6 @@ public class PeerProcess {
             saveCompleteFile();
         }
 
-        
-    
-        
-
         checkAndSendNotInterestedMessages();
 
         sendRequestMessage(socket);
@@ -634,8 +639,6 @@ public class PeerProcess {
     
         // Update the peerBitfields map
         peerBitfields.put(socket, peerBitfield);
-
-        checkAndSendNotInterestedMessages();
     
         System.out.println("Peer " + peerIDs.get(socket) + " has piece " + pieceIndex);
     }
