@@ -29,6 +29,10 @@ public class MessageLogger {
         try(BufferedWriter writer = new BufferedWriter(new FileWriter(filepath, true))) {
             writer.write(dateString + ": Peer " + peerID + " has the preferred neighbors ");
             for (int i = 0; i < preferredNeighbors.size(); i++) {
+                if (i == preferredNeighbors.size() - 1) {
+                    writer.write(preferredNeighbors.get(i) + ".");
+                    break;
+                }
                 writer.write(preferredNeighbors.get(i) + ", ");
             }
             writer.newLine();

@@ -1,136 +1,270 @@
-2023-11-29 16:36:51: Peer 1002 received the 'interested' message from 1001.
-2023-11-29 16:36:54: Peer 1002 received the 'have' message from 1001 for the piece 61.
-2023-11-29 16:36:54: Peer 1002 received the 'have' message from 1001 for the piece 85.
-2023-11-29 16:36:54: Peer 1002 received the 'have' message from 1001 for the piece 116.
-2023-11-29 16:36:54: Peer 1002 received the 'have' message from 1001 for the piece 107.
-2023-11-29 16:36:54: Peer 1002 received the 'have' message from 1001 for the piece 8.
-2023-11-29 16:36:54: Peer 1002 received the 'have' message from 1001 for the piece 88.
-2023-11-29 16:36:54: Peer 1002 received the 'have' message from 1001 for the piece 46.
-2023-11-29 16:36:54: Peer 1002 received the 'have' message from 1001 for the piece 45.
-2023-11-29 16:36:54: Peer 1002 received the 'have' message from 1001 for the piece 9.
-2023-11-29 16:36:54: Peer 1002 received the 'have' message from 1001 for the piece 92.
-2023-11-29 16:36:54: Peer 1002 received the 'have' message from 1001 for the piece 75.
-2023-11-29 16:36:54: Peer 1002 received the 'have' message from 1001 for the piece 96.
-2023-11-29 16:36:54: Peer 1002 received the 'have' message from 1001 for the piece 123.
-2023-11-29 16:36:54: Peer 1002 received the 'have' message from 1001 for the piece 81.
-2023-11-29 16:36:54: Peer 1002 received the 'have' message from 1001 for the piece 130.
-2023-11-29 16:36:54: Peer 1002 received the 'have' message from 1001 for the piece 31.
-2023-11-29 16:36:54: Peer 1002 received the 'have' message from 1001 for the piece 110.
-2023-11-29 16:36:54: Peer 1002 received the 'have' message from 1001 for the piece 62.
-2023-11-29 16:36:54: Peer 1002 received the 'have' message from 1001 for the piece 95.
-2023-11-29 16:36:54: Peer 1002 received the 'have' message from 1001 for the piece 71.
-2023-11-29 16:36:54: Peer 1002 received the 'have' message from 1001 for the piece 42.
-2023-11-29 16:36:54: Peer 1002 received the 'have' message from 1001 for the piece 20.
-2023-11-29 16:36:54: Peer 1002 received the 'have' message from 1001 for the piece 54.
-2023-11-29 16:36:54: Peer 1002 received the 'have' message from 1001 for the piece 41.
-2023-11-29 16:36:54: Peer 1002 received the 'have' message from 1001 for the piece 27.
-2023-11-29 16:36:54: Peer 1002 received the 'have' message from 1001 for the piece 72.
-2023-11-29 16:36:54: Peer 1002 received the 'have' message from 1001 for the piece 129.
-2023-11-29 16:36:54: Peer 1002 received the 'have' message from 1001 for the piece 111.
-2023-11-29 16:36:54: Peer 1002 received the 'have' message from 1001 for the piece 112.
-2023-11-29 16:36:54: Peer 1002 received the 'have' message from 1001 for the piece 82.
-2023-11-29 16:36:54: Peer 1002 received the 'have' message from 1001 for the piece 19.
-2023-11-29 16:36:54: Peer 1002 received the 'have' message from 1001 for the piece 101.
-2023-11-29 16:36:54: Peer 1002 received the 'have' message from 1001 for the piece 25.
-2023-11-29 16:36:54: Peer 1002 received the 'have' message from 1001 for the piece 108.
-2023-11-29 16:36:54: Peer 1002 received the 'have' message from 1001 for the piece 7.
-2023-11-29 16:36:54: Peer 1002 received the 'have' message from 1001 for the piece 63.
-2023-11-29 16:36:54: Peer 1002 received the 'have' message from 1001 for the piece 115.
-2023-11-29 16:36:54: Peer 1002 received the 'have' message from 1001 for the piece 23.
-2023-11-29 16:36:54: Peer 1002 received the 'have' message from 1001 for the piece 12.
-2023-11-29 16:36:54: Peer 1002 received the 'have' message from 1001 for the piece 109.
-2023-11-29 16:36:54: Peer 1002 received the 'have' message from 1001 for the piece 118.
-2023-11-29 16:36:54: Peer 1002 received the 'have' message from 1001 for the piece 35.
-2023-11-29 16:36:54: Peer 1002 received the 'have' message from 1001 for the piece 104.
-2023-11-29 16:36:54: Peer 1002 received the 'have' message from 1001 for the piece 125.
-2023-11-29 16:36:54: Peer 1002 received the 'have' message from 1001 for the piece 58.
-2023-11-29 16:36:54: Peer 1002 received the 'have' message from 1001 for the piece 44.
-2023-11-29 16:36:54: Peer 1002 received the 'have' message from 1001 for the piece 53.
-2023-11-29 16:36:54: Peer 1002 received the 'have' message from 1001 for the piece 83.
-2023-11-29 16:36:54: Peer 1002 received the 'have' message from 1001 for the piece 30.
-2023-11-29 16:36:54: Peer 1002 received the 'have' message from 1001 for the piece 49.
-2023-11-29 16:36:54: Peer 1002 received the 'have' message from 1001 for the piece 52.
-2023-11-29 16:36:54: Peer 1002 received the 'have' message from 1001 for the piece 26.
-2023-11-29 16:36:54: Peer 1002 received the 'have' message from 1001 for the piece 80.
-2023-11-29 16:36:54: Peer 1002 received the 'have' message from 1001 for the piece 79.
-2023-11-29 16:36:54: Peer 1002 received the 'have' message from 1001 for the piece 10.
-2023-11-29 16:36:54: Peer 1002 received the 'have' message from 1001 for the piece 14.
-2023-11-29 16:36:54: Peer 1002 received the 'have' message from 1001 for the piece 122.
-2023-11-29 16:36:54: Peer 1002 received the 'have' message from 1001 for the piece 93.
-2023-11-29 16:36:54: Peer 1002 received the 'have' message from 1001 for the piece 67.
-2023-11-29 16:36:54: Peer 1002 received the 'have' message from 1001 for the piece 29.
-2023-11-29 16:36:54: Peer 1002 received the 'have' message from 1001 for the piece 89.
-2023-11-29 16:36:54: Peer 1002 received the 'have' message from 1001 for the piece 106.
-2023-11-29 16:36:54: Peer 1002 received the 'have' message from 1001 for the piece 127.
-2023-11-29 16:36:54: Peer 1002 received the 'have' message from 1001 for the piece 94.
-2023-11-29 16:36:54: Peer 1002 received the 'have' message from 1001 for the piece 65.
-2023-11-29 16:36:54: Peer 1002 received the 'have' message from 1001 for the piece 76.
-2023-11-29 16:36:54: Peer 1002 received the 'have' message from 1001 for the piece 131.
-2023-11-29 16:36:54: Peer 1002 received the 'have' message from 1001 for the piece 16.
-2023-11-29 16:36:54: Peer 1002 received the 'have' message from 1001 for the piece 11.
-2023-11-29 16:36:54: Peer 1002 received the 'have' message from 1001 for the piece 47.
-2023-11-29 16:36:54: Peer 1002 received the 'have' message from 1001 for the piece 64.
-2023-11-29 16:36:54: Peer 1002 received the 'have' message from 1001 for the piece 33.
-2023-11-29 16:36:54: Peer 1002 received the 'have' message from 1001 for the piece 70.
-2023-11-29 16:36:54: Peer 1002 received the 'have' message from 1001 for the piece 87.
-2023-11-29 16:36:54: Peer 1002 received the 'have' message from 1001 for the piece 74.
-2023-11-29 16:36:54: Peer 1002 received the 'have' message from 1001 for the piece 77.
-2023-11-29 16:36:54: Peer 1002 received the 'have' message from 1001 for the piece 51.
-2023-11-29 16:36:54: Peer 1002 received the 'have' message from 1001 for the piece 38.
-2023-11-29 16:36:54: Peer 1002 received the 'have' message from 1001 for the piece 43.
-2023-11-29 16:36:54: Peer 1002 received the 'have' message from 1001 for the piece 56.
-2023-11-29 16:36:54: Peer 1002 received the 'have' message from 1001 for the piece 121.
-2023-11-29 16:36:54: Peer 1002 received the 'have' message from 1001 for the piece 0.
-2023-11-29 16:36:54: Peer 1002 received the 'have' message from 1001 for the piece 126.
-2023-11-29 16:36:54: Peer 1002 received the 'have' message from 1001 for the piece 32.
-2023-11-29 16:36:54: Peer 1002 received the 'have' message from 1001 for the piece 124.
-2023-11-29 16:36:54: Peer 1002 received the 'have' message from 1001 for the piece 3.
-2023-11-29 16:36:54: Peer 1002 received the 'have' message from 1001 for the piece 18.
-2023-11-29 16:36:54: Peer 1002 received the 'have' message from 1001 for the piece 73.
-2023-11-29 16:36:54: Peer 1002 received the 'have' message from 1001 for the piece 22.
-2023-11-29 16:36:54: Peer 1002 received the 'have' message from 1001 for the piece 103.
-2023-11-29 16:36:54: Peer 1002 received the 'have' message from 1001 for the piece 1.
-2023-11-29 16:36:54: Peer 1002 received the 'have' message from 1001 for the piece 86.
-2023-11-29 16:36:54: Peer 1002 received the 'have' message from 1001 for the piece 24.
-2023-11-29 16:36:54: Peer 1002 received the 'have' message from 1001 for the piece 132.
-2023-11-29 16:36:54: Peer 1002 received the 'have' message from 1001 for the piece 50.
-2023-11-29 16:36:54: Peer 1002 received the 'have' message from 1001 for the piece 28.
-2023-11-29 16:36:54: Peer 1002 received the 'have' message from 1001 for the piece 48.
-2023-11-29 16:36:54: Peer 1002 received the 'have' message from 1001 for the piece 91.
-2023-11-29 16:36:54: Peer 1002 received the 'have' message from 1001 for the piece 13.
-2023-11-29 16:36:54: Peer 1002 received the 'have' message from 1001 for the piece 68.
-2023-11-29 16:36:54: Peer 1002 received the 'have' message from 1001 for the piece 5.
-2023-11-29 16:36:54: Peer 1002 received the 'have' message from 1001 for the piece 37.
-2023-11-29 16:36:54: Peer 1002 received the 'have' message from 1001 for the piece 99.
-2023-11-29 16:36:54: Peer 1002 received the 'have' message from 1001 for the piece 66.
-2023-11-29 16:36:54: Peer 1002 received the 'have' message from 1001 for the piece 40.
-2023-11-29 16:36:54: Peer 1002 received the 'have' message from 1001 for the piece 119.
-2023-11-29 16:36:54: Peer 1002 received the 'have' message from 1001 for the piece 114.
-2023-11-29 16:36:54: Peer 1002 received the 'have' message from 1001 for the piece 17.
-2023-11-29 16:36:54: Peer 1002 received the 'have' message from 1001 for the piece 113.
-2023-11-29 16:36:54: Peer 1002 received the 'have' message from 1001 for the piece 4.
-2023-11-29 16:36:54: Peer 1002 received the 'have' message from 1001 for the piece 21.
-2023-11-29 16:36:54: Peer 1002 received the 'have' message from 1001 for the piece 100.
-2023-11-29 16:36:54: Peer 1002 received the 'have' message from 1001 for the piece 120.
-2023-11-29 16:36:54: Peer 1002 received the 'have' message from 1001 for the piece 128.
-2023-11-29 16:36:54: Peer 1002 received the 'have' message from 1001 for the piece 55.
-2023-11-29 16:36:54: Peer 1002 received the 'have' message from 1001 for the piece 34.
-2023-11-29 16:36:54: Peer 1002 received the 'have' message from 1001 for the piece 39.
-2023-11-29 16:36:54: Peer 1002 received the 'have' message from 1001 for the piece 60.
-2023-11-29 16:36:54: Peer 1002 received the 'have' message from 1001 for the piece 2.
-2023-11-29 16:36:54: Peer 1002 received the 'have' message from 1001 for the piece 90.
-2023-11-29 16:36:54: Peer 1002 received the 'have' message from 1001 for the piece 36.
-2023-11-29 16:36:54: Peer 1002 received the 'have' message from 1001 for the piece 69.
-2023-11-29 16:36:54: Peer 1002 received the 'have' message from 1001 for the piece 97.
-2023-11-29 16:36:54: Peer 1002 received the 'have' message from 1001 for the piece 102.
-2023-11-29 16:36:54: Peer 1002 received the 'have' message from 1001 for the piece 78.
-2023-11-29 16:36:54: Peer 1002 received the 'have' message from 1001 for the piece 6.
-2023-11-29 16:36:54: Peer 1002 received the 'have' message from 1001 for the piece 117.
-2023-11-29 16:36:54: Peer 1002 received the 'have' message from 1001 for the piece 105.
-2023-11-29 16:36:54: Peer 1002 received the 'have' message from 1001 for the piece 57.
-2023-11-29 16:36:54: Peer 1002 received the 'have' message from 1001 for the piece 84.
-2023-11-29 16:36:54: Peer 1002 received the 'have' message from 1001 for the piece 59.
-2023-11-29 16:36:54: Peer 1002 received the 'have' message from 1001 for the piece 98.
-2023-11-29 16:36:54: Peer 1002 received the 'have' message from 1001 for the piece 15.
-2023-11-29 16:36:54: Peer 1002 received the 'not interested' message from 1001.
-2023-11-29 16:36:56: Peer 1002 has the preferred neighbors 1001, 
+2023-11-29 16:58:32: Peer 1002 received the 'interested' message from 1001.
+2023-11-29 16:58:34: Peer 1002 received the 'have' message from 1001 for the piece 99.
+2023-11-29 16:58:34: Peer 1002 has downloaded the piece 99 from 1001. Now the number of pieces it has is 1.
+2023-11-29 16:58:34: Peer 1002 received the 'have' message from 1001 for the piece 108.
+2023-11-29 16:58:34: Peer 1002 has downloaded the piece 108 from 1001. Now the number of pieces it has is 2.
+2023-11-29 16:58:34: Peer 1002 received the 'have' message from 1001 for the piece 29.
+2023-11-29 16:58:34: Peer 1002 has downloaded the piece 29 from 1001. Now the number of pieces it has is 3.
+2023-11-29 16:58:34: Peer 1002 received the 'have' message from 1001 for the piece 120.
+2023-11-29 16:58:34: Peer 1002 has downloaded the piece 120 from 1001. Now the number of pieces it has is 4.
+2023-11-29 16:58:34: Peer 1002 received the 'have' message from 1001 for the piece 75.
+2023-11-29 16:58:34: Peer 1002 has downloaded the piece 75 from 1001. Now the number of pieces it has is 5.
+2023-11-29 16:58:34: Peer 1002 received the 'have' message from 1001 for the piece 45.
+2023-11-29 16:58:34: Peer 1002 has downloaded the piece 45 from 1001. Now the number of pieces it has is 6.
+2023-11-29 16:58:34: Peer 1002 received the 'have' message from 1001 for the piece 7.
+2023-11-29 16:58:34: Peer 1002 has downloaded the piece 7 from 1001. Now the number of pieces it has is 7.
+2023-11-29 16:58:34: Peer 1002 received the 'have' message from 1001 for the piece 72.
+2023-11-29 16:58:34: Peer 1002 has downloaded the piece 72 from 1001. Now the number of pieces it has is 8.
+2023-11-29 16:58:34: Peer 1002 received the 'have' message from 1001 for the piece 36.
+2023-11-29 16:58:34: Peer 1002 has downloaded the piece 36 from 1001. Now the number of pieces it has is 9.
+2023-11-29 16:58:34: Peer 1002 received the 'have' message from 1001 for the piece 32.
+2023-11-29 16:58:34: Peer 1002 has downloaded the piece 32 from 1001. Now the number of pieces it has is 10.
+2023-11-29 16:58:34: Peer 1002 received the 'have' message from 1001 for the piece 131.
+2023-11-29 16:58:34: Peer 1002 has downloaded the piece 131 from 1001. Now the number of pieces it has is 11.
+2023-11-29 16:58:34: Peer 1002 received the 'have' message from 1001 for the piece 91.
+2023-11-29 16:58:34: Peer 1002 has downloaded the piece 91 from 1001. Now the number of pieces it has is 12.
+2023-11-29 16:58:34: Peer 1002 received the 'have' message from 1001 for the piece 33.
+2023-11-29 16:58:34: Peer 1002 has downloaded the piece 33 from 1001. Now the number of pieces it has is 13.
+2023-11-29 16:58:34: Peer 1002 received the 'have' message from 1001 for the piece 127.
+2023-11-29 16:58:34: Peer 1002 has downloaded the piece 127 from 1001. Now the number of pieces it has is 14.
+2023-11-29 16:58:34: Peer 1002 received the 'have' message from 1001 for the piece 28.
+2023-11-29 16:58:34: Peer 1002 has downloaded the piece 28 from 1001. Now the number of pieces it has is 15.
+2023-11-29 16:58:34: Peer 1002 received the 'have' message from 1001 for the piece 119.
+2023-11-29 16:58:34: Peer 1002 has downloaded the piece 119 from 1001. Now the number of pieces it has is 16.
+2023-11-29 16:58:34: Peer 1002 received the 'have' message from 1001 for the piece 113.
+2023-11-29 16:58:34: Peer 1002 has downloaded the piece 113 from 1001. Now the number of pieces it has is 17.
+2023-11-29 16:58:34: Peer 1002 received the 'have' message from 1001 for the piece 20.
+2023-11-29 16:58:34: Peer 1002 has downloaded the piece 20 from 1001. Now the number of pieces it has is 18.
+2023-11-29 16:58:34: Peer 1002 received the 'have' message from 1001 for the piece 14.
+2023-11-29 16:58:34: Peer 1002 has downloaded the piece 14 from 1001. Now the number of pieces it has is 19.
+2023-11-29 16:58:34: Peer 1002 received the 'have' message from 1001 for the piece 103.
+2023-11-29 16:58:34: Peer 1002 has downloaded the piece 103 from 1001. Now the number of pieces it has is 20.
+2023-11-29 16:58:34: Peer 1002 received the 'have' message from 1001 for the piece 21.
+2023-11-29 16:58:34: Peer 1002 has downloaded the piece 21 from 1001. Now the number of pieces it has is 21.
+2023-11-29 16:58:34: Peer 1002 received the 'have' message from 1001 for the piece 52.
+2023-11-29 16:58:34: Peer 1002 has downloaded the piece 52 from 1001. Now the number of pieces it has is 22.
+2023-11-29 16:58:34: Peer 1002 received the 'have' message from 1001 for the piece 13.
+2023-11-29 16:58:34: Peer 1002 has downloaded the piece 13 from 1001. Now the number of pieces it has is 23.
+2023-11-29 16:58:34: Peer 1002 received the 'have' message from 1001 for the piece 18.
+2023-11-29 16:58:34: Peer 1002 has downloaded the piece 18 from 1001. Now the number of pieces it has is 24.
+2023-11-29 16:58:34: Peer 1002 received the 'have' message from 1001 for the piece 10.
+2023-11-29 16:58:34: Peer 1002 has downloaded the piece 10 from 1001. Now the number of pieces it has is 25.
+2023-11-29 16:58:34: Peer 1002 received the 'have' message from 1001 for the piece 106.
+2023-11-29 16:58:34: Peer 1002 has downloaded the piece 106 from 1001. Now the number of pieces it has is 26.
+2023-11-29 16:58:34: Peer 1002 received the 'have' message from 1001 for the piece 124.
+2023-11-29 16:58:34: Peer 1002 has downloaded the piece 124 from 1001. Now the number of pieces it has is 27.
+2023-11-29 16:58:34: Peer 1002 received the 'have' message from 1001 for the piece 17.
+2023-11-29 16:58:34: Peer 1002 has downloaded the piece 17 from 1001. Now the number of pieces it has is 28.
+2023-11-29 16:58:34: Peer 1002 received the 'have' message from 1001 for the piece 19.
+2023-11-29 16:58:34: Peer 1002 has downloaded the piece 19 from 1001. Now the number of pieces it has is 29.
+2023-11-29 16:58:34: Peer 1002 received the 'have' message from 1001 for the piece 48.
+2023-11-29 16:58:34: Peer 1002 has downloaded the piece 48 from 1001. Now the number of pieces it has is 30.
+2023-11-29 16:58:34: Peer 1002 received the 'have' message from 1001 for the piece 62.
+2023-11-29 16:58:34: Peer 1002 has downloaded the piece 62 from 1001. Now the number of pieces it has is 31.
+2023-11-29 16:58:34: Peer 1002 received the 'have' message from 1001 for the piece 26.
+2023-11-29 16:58:34: Peer 1002 has downloaded the piece 26 from 1001. Now the number of pieces it has is 32.
+2023-11-29 16:58:34: Peer 1002 received the 'have' message from 1001 for the piece 81.
+2023-11-29 16:58:34: Peer 1002 has downloaded the piece 81 from 1001. Now the number of pieces it has is 33.
+2023-11-29 16:58:34: Peer 1002 received the 'have' message from 1001 for the piece 98.
+2023-11-29 16:58:34: Peer 1002 has downloaded the piece 98 from 1001. Now the number of pieces it has is 34.
+2023-11-29 16:58:34: Peer 1002 received the 'have' message from 1001 for the piece 42.
+2023-11-29 16:58:34: Peer 1002 has downloaded the piece 42 from 1001. Now the number of pieces it has is 35.
+2023-11-29 16:58:34: Peer 1002 received the 'have' message from 1001 for the piece 130.
+2023-11-29 16:58:34: Peer 1002 has downloaded the piece 130 from 1001. Now the number of pieces it has is 36.
+2023-11-29 16:58:34: Peer 1002 received the 'have' message from 1001 for the piece 23.
+2023-11-29 16:58:34: Peer 1002 has downloaded the piece 23 from 1001. Now the number of pieces it has is 37.
+2023-11-29 16:58:34: Peer 1002 received the 'have' message from 1001 for the piece 90.
+2023-11-29 16:58:34: Peer 1002 has downloaded the piece 90 from 1001. Now the number of pieces it has is 38.
+2023-11-29 16:58:34: Peer 1002 received the 'have' message from 1001 for the piece 60.
+2023-11-29 16:58:34: Peer 1002 has downloaded the piece 60 from 1001. Now the number of pieces it has is 39.
+2023-11-29 16:58:34: Peer 1002 received the 'have' message from 1001 for the piece 25.
+2023-11-29 16:58:34: Peer 1002 has downloaded the piece 25 from 1001. Now the number of pieces it has is 40.
+2023-11-29 16:58:34: Peer 1002 received the 'have' message from 1001 for the piece 67.
+2023-11-29 16:58:34: Peer 1002 has downloaded the piece 67 from 1001. Now the number of pieces it has is 41.
+2023-11-29 16:58:34: Peer 1002 received the 'have' message from 1001 for the piece 54.
+2023-11-29 16:58:34: Peer 1002 has downloaded the piece 54 from 1001. Now the number of pieces it has is 42.
+2023-11-29 16:58:34: Peer 1002 received the 'have' message from 1001 for the piece 40.
+2023-11-29 16:58:34: Peer 1002 has downloaded the piece 40 from 1001. Now the number of pieces it has is 43.
+2023-11-29 16:58:34: Peer 1002 received the 'have' message from 1001 for the piece 79.
+2023-11-29 16:58:34: Peer 1002 has downloaded the piece 79 from 1001. Now the number of pieces it has is 44.
+2023-11-29 16:58:34: Peer 1002 received the 'have' message from 1001 for the piece 96.
+2023-11-29 16:58:34: Peer 1002 has downloaded the piece 96 from 1001. Now the number of pieces it has is 45.
+2023-11-29 16:58:34: Peer 1002 received the 'have' message from 1001 for the piece 118.
+2023-11-29 16:58:34: Peer 1002 has downloaded the piece 118 from 1001. Now the number of pieces it has is 46.
+2023-11-29 16:58:34: Peer 1002 received the 'have' message from 1001 for the piece 94.
+2023-11-29 16:58:34: Peer 1002 has downloaded the piece 94 from 1001. Now the number of pieces it has is 47.
+2023-11-29 16:58:34: Peer 1002 received the 'have' message from 1001 for the piece 111.
+2023-11-29 16:58:34: Peer 1002 has downloaded the piece 111 from 1001. Now the number of pieces it has is 48.
+2023-11-29 16:58:34: Peer 1002 received the 'have' message from 1001 for the piece 61.
+2023-11-29 16:58:34: Peer 1002 has downloaded the piece 61 from 1001. Now the number of pieces it has is 49.
+2023-11-29 16:58:34: Peer 1002 received the 'have' message from 1001 for the piece 64.
+2023-11-29 16:58:34: Peer 1002 has downloaded the piece 64 from 1001. Now the number of pieces it has is 50.
+2023-11-29 16:58:34: Peer 1002 received the 'have' message from 1001 for the piece 39.
+2023-11-29 16:58:34: Peer 1002 has downloaded the piece 39 from 1001. Now the number of pieces it has is 51.
+2023-11-29 16:58:34: Peer 1002 received the 'have' message from 1001 for the piece 87.
+2023-11-29 16:58:34: Peer 1002 has downloaded the piece 87 from 1001. Now the number of pieces it has is 52.
+2023-11-29 16:58:35: Peer 1002 received the 'have' message from 1001 for the piece 27.
+2023-11-29 16:58:35: Peer 1002 has downloaded the piece 27 from 1001. Now the number of pieces it has is 53.
+2023-11-29 16:58:35: Peer 1002 received the 'have' message from 1001 for the piece 35.
+2023-11-29 16:58:35: Peer 1002 has downloaded the piece 35 from 1001. Now the number of pieces it has is 54.
+2023-11-29 16:58:35: Peer 1002 received the 'have' message from 1001 for the piece 129.
+2023-11-29 16:58:35: Peer 1002 has downloaded the piece 129 from 1001. Now the number of pieces it has is 55.
+2023-11-29 16:58:35: Peer 1002 received the 'have' message from 1001 for the piece 112.
+2023-11-29 16:58:35: Peer 1002 has downloaded the piece 112 from 1001. Now the number of pieces it has is 56.
+2023-11-29 16:58:35: Peer 1002 received the 'have' message from 1001 for the piece 123.
+2023-11-29 16:58:35: Peer 1002 has downloaded the piece 123 from 1001. Now the number of pieces it has is 57.
+2023-11-29 16:58:35: Peer 1002 received the 'have' message from 1001 for the piece 46.
+2023-11-29 16:58:35: Peer 1002 has downloaded the piece 46 from 1001. Now the number of pieces it has is 58.
+2023-11-29 16:58:35: Peer 1002 received the 'have' message from 1001 for the piece 93.
+2023-11-29 16:58:35: Peer 1002 has downloaded the piece 93 from 1001. Now the number of pieces it has is 59.
+2023-11-29 16:58:35: Peer 1002 received the 'have' message from 1001 for the piece 34.
+2023-11-29 16:58:35: Peer 1002 has downloaded the piece 34 from 1001. Now the number of pieces it has is 60.
+2023-11-29 16:58:35: Peer 1002 received the 'have' message from 1001 for the piece 43.
+2023-11-29 16:58:35: Peer 1002 has downloaded the piece 43 from 1001. Now the number of pieces it has is 61.
+2023-11-29 16:58:35: Peer 1002 received the 'have' message from 1001 for the piece 105.
+2023-11-29 16:58:35: Peer 1002 has downloaded the piece 105 from 1001. Now the number of pieces it has is 62.
+2023-11-29 16:58:35: Peer 1002 received the 'have' message from 1001 for the piece 38.
+2023-11-29 16:58:35: Peer 1002 has downloaded the piece 38 from 1001. Now the number of pieces it has is 63.
+2023-11-29 16:58:35: Peer 1002 received the 'have' message from 1001 for the piece 89.
+2023-11-29 16:58:35: Peer 1002 has downloaded the piece 89 from 1001. Now the number of pieces it has is 64.
+2023-11-29 16:58:35: Peer 1002 received the 'have' message from 1001 for the piece 82.
+2023-11-29 16:58:35: Peer 1002 has downloaded the piece 82 from 1001. Now the number of pieces it has is 65.
+2023-11-29 16:58:35: Peer 1002 received the 'have' message from 1001 for the piece 41.
+2023-11-29 16:58:35: Peer 1002 has downloaded the piece 41 from 1001. Now the number of pieces it has is 66.
+2023-11-29 16:58:35: Peer 1002 received the 'have' message from 1001 for the piece 109.
+2023-11-29 16:58:35: Peer 1002 has downloaded the piece 109 from 1001. Now the number of pieces it has is 67.
+2023-11-29 16:58:35: Peer 1002 received the 'have' message from 1001 for the piece 86.
+2023-11-29 16:58:35: Peer 1002 has downloaded the piece 86 from 1001. Now the number of pieces it has is 68.
+2023-11-29 16:58:35: Peer 1002 received the 'have' message from 1001 for the piece 125.
+2023-11-29 16:58:35: Peer 1002 has downloaded the piece 125 from 1001. Now the number of pieces it has is 69.
+2023-11-29 16:58:35: Peer 1002 received the 'have' message from 1001 for the piece 92.
+2023-11-29 16:58:35: Peer 1002 has downloaded the piece 92 from 1001. Now the number of pieces it has is 70.
+2023-11-29 16:58:35: Peer 1002 received the 'have' message from 1001 for the piece 68.
+2023-11-29 16:58:35: Peer 1002 has downloaded the piece 68 from 1001. Now the number of pieces it has is 71.
+2023-11-29 16:58:35: Peer 1002 received the 'have' message from 1001 for the piece 69.
+2023-11-29 16:58:35: Peer 1002 has downloaded the piece 69 from 1001. Now the number of pieces it has is 72.
+2023-11-29 16:58:35: Peer 1002 received the 'have' message from 1001 for the piece 110.
+2023-11-29 16:58:35: Peer 1002 has downloaded the piece 110 from 1001. Now the number of pieces it has is 73.
+2023-11-29 16:58:35: Peer 1002 received the 'have' message from 1001 for the piece 78.
+2023-11-29 16:58:35: Peer 1002 has downloaded the piece 78 from 1001. Now the number of pieces it has is 74.
+2023-11-29 16:58:35: Peer 1002 received the 'have' message from 1001 for the piece 115.
+2023-11-29 16:58:35: Peer 1002 has downloaded the piece 115 from 1001. Now the number of pieces it has is 75.
+2023-11-29 16:58:35: Peer 1002 received the 'have' message from 1001 for the piece 101.
+2023-11-29 16:58:35: Peer 1002 has downloaded the piece 101 from 1001. Now the number of pieces it has is 76.
+2023-11-29 16:58:35: Peer 1002 received the 'have' message from 1001 for the piece 65.
+2023-11-29 16:58:35: Peer 1002 has downloaded the piece 65 from 1001. Now the number of pieces it has is 77.
+2023-11-29 16:58:35: Peer 1002 received the 'have' message from 1001 for the piece 2.
+2023-11-29 16:58:35: Peer 1002 has downloaded the piece 2 from 1001. Now the number of pieces it has is 78.
+2023-11-29 16:58:35: Peer 1002 received the 'have' message from 1001 for the piece 3.
+2023-11-29 16:58:35: Peer 1002 has downloaded the piece 3 from 1001. Now the number of pieces it has is 79.
+2023-11-29 16:58:35: Peer 1002 received the 'have' message from 1001 for the piece 71.
+2023-11-29 16:58:35: Peer 1002 has downloaded the piece 71 from 1001. Now the number of pieces it has is 80.
+2023-11-29 16:58:35: Peer 1002 received the 'have' message from 1001 for the piece 5.
+2023-11-29 16:58:35: Peer 1002 has downloaded the piece 5 from 1001. Now the number of pieces it has is 81.
+2023-11-29 16:58:35: Peer 1002 received the 'have' message from 1001 for the piece 49.
+2023-11-29 16:58:35: Peer 1002 has downloaded the piece 49 from 1001. Now the number of pieces it has is 82.
+2023-11-29 16:58:35: Peer 1002 received the 'have' message from 1001 for the piece 128.
+2023-11-29 16:58:35: Peer 1002 has downloaded the piece 128 from 1001. Now the number of pieces it has is 83.
+2023-11-29 16:58:35: Peer 1002 received the 'have' message from 1001 for the piece 107.
+2023-11-29 16:58:35: Peer 1002 has downloaded the piece 107 from 1001. Now the number of pieces it has is 84.
+2023-11-29 16:58:35: Peer 1002 received the 'have' message from 1001 for the piece 55.
+2023-11-29 16:58:35: Peer 1002 has downloaded the piece 55 from 1001. Now the number of pieces it has is 85.
+2023-11-29 16:58:35: Peer 1002 received the 'have' message from 1001 for the piece 53.
+2023-11-29 16:58:35: Peer 1002 has downloaded the piece 53 from 1001. Now the number of pieces it has is 86.
+2023-11-29 16:58:35: Peer 1002 received the 'have' message from 1001 for the piece 95.
+2023-11-29 16:58:35: Peer 1002 has downloaded the piece 95 from 1001. Now the number of pieces it has is 87.
+2023-11-29 16:58:35: Peer 1002 received the 'have' message from 1001 for the piece 88.
+2023-11-29 16:58:35: Peer 1002 has downloaded the piece 88 from 1001. Now the number of pieces it has is 88.
+2023-11-29 16:58:35: Peer 1002 received the 'have' message from 1001 for the piece 6.
+2023-11-29 16:58:35: Peer 1002 has downloaded the piece 6 from 1001. Now the number of pieces it has is 89.
+2023-11-29 16:58:35: Peer 1002 received the 'have' message from 1001 for the piece 85.
+2023-11-29 16:58:35: Peer 1002 has downloaded the piece 85 from 1001. Now the number of pieces it has is 90.
+2023-11-29 16:58:35: Peer 1002 received the 'have' message from 1001 for the piece 15.
+2023-11-29 16:58:35: Peer 1002 has downloaded the piece 15 from 1001. Now the number of pieces it has is 91.
+2023-11-29 16:58:35: Peer 1002 received the 'have' message from 1001 for the piece 80.
+2023-11-29 16:58:35: Peer 1002 has downloaded the piece 80 from 1001. Now the number of pieces it has is 92.
+2023-11-29 16:58:35: Peer 1002 received the 'have' message from 1001 for the piece 50.
+2023-11-29 16:58:35: Peer 1002 has downloaded the piece 50 from 1001. Now the number of pieces it has is 93.
+2023-11-29 16:58:35: Peer 1002 received the 'have' message from 1001 for the piece 44.
+2023-11-29 16:58:35: Peer 1002 has downloaded the piece 44 from 1001. Now the number of pieces it has is 94.
+2023-11-29 16:58:35: Peer 1002 received the 'have' message from 1001 for the piece 47.
+2023-11-29 16:58:35: Peer 1002 has downloaded the piece 47 from 1001. Now the number of pieces it has is 95.
+2023-11-29 16:58:35: Peer 1002 received the 'have' message from 1001 for the piece 30.
+2023-11-29 16:58:35: Peer 1002 has downloaded the piece 30 from 1001. Now the number of pieces it has is 96.
+2023-11-29 16:58:35: Peer 1002 received the 'have' message from 1001 for the piece 76.
+2023-11-29 16:58:35: Peer 1002 has downloaded the piece 76 from 1001. Now the number of pieces it has is 97.
+2023-11-29 16:58:35: Peer 1002 received the 'have' message from 1001 for the piece 66.
+2023-11-29 16:58:35: Peer 1002 has downloaded the piece 66 from 1001. Now the number of pieces it has is 98.
+2023-11-29 16:58:35: Peer 1002 received the 'have' message from 1001 for the piece 126.
+2023-11-29 16:58:35: Peer 1002 has downloaded the piece 126 from 1001. Now the number of pieces it has is 99.
+2023-11-29 16:58:35: Peer 1002 received the 'have' message from 1001 for the piece 11.
+2023-11-29 16:58:35: Peer 1002 has downloaded the piece 11 from 1001. Now the number of pieces it has is 100.
+2023-11-29 16:58:35: Peer 1002 received the 'have' message from 1001 for the piece 116.
+2023-11-29 16:58:35: Peer 1002 has downloaded the piece 116 from 1001. Now the number of pieces it has is 101.
+2023-11-29 16:58:35: Peer 1002 received the 'have' message from 1001 for the piece 51.
+2023-11-29 16:58:35: Peer 1002 has downloaded the piece 51 from 1001. Now the number of pieces it has is 102.
+2023-11-29 16:58:35: Peer 1002 received the 'have' message from 1001 for the piece 31.
+2023-11-29 16:58:35: Peer 1002 has downloaded the piece 31 from 1001. Now the number of pieces it has is 103.
+2023-11-29 16:58:35: Peer 1002 received the 'have' message from 1001 for the piece 97.
+2023-11-29 16:58:35: Peer 1002 has downloaded the piece 97 from 1001. Now the number of pieces it has is 104.
+2023-11-29 16:58:35: Peer 1002 received the 'have' message from 1001 for the piece 102.
+2023-11-29 16:58:35: Peer 1002 has downloaded the piece 102 from 1001. Now the number of pieces it has is 105.
+2023-11-29 16:58:35: Peer 1002 received the 'have' message from 1001 for the piece 114.
+2023-11-29 16:58:35: Peer 1002 has downloaded the piece 114 from 1001. Now the number of pieces it has is 106.
+2023-11-29 16:58:35: Peer 1002 received the 'have' message from 1001 for the piece 70.
+2023-11-29 16:58:35: Peer 1002 has downloaded the piece 70 from 1001. Now the number of pieces it has is 107.
+2023-11-29 16:58:35: Peer 1002 received the 'have' message from 1001 for the piece 84.
+2023-11-29 16:58:35: Peer 1002 has downloaded the piece 84 from 1001. Now the number of pieces it has is 108.
+2023-11-29 16:58:35: Peer 1002 received the 'have' message from 1001 for the piece 16.
+2023-11-29 16:58:35: Peer 1002 has downloaded the piece 16 from 1001. Now the number of pieces it has is 109.
+2023-11-29 16:58:35: Peer 1002 received the 'have' message from 1001 for the piece 73.
+2023-11-29 16:58:35: Peer 1002 has downloaded the piece 73 from 1001. Now the number of pieces it has is 110.
+2023-11-29 16:58:35: Peer 1002 received the 'have' message from 1001 for the piece 56.
+2023-11-29 16:58:35: Peer 1002 has downloaded the piece 56 from 1001. Now the number of pieces it has is 111.
+2023-11-29 16:58:35: Peer 1002 received the 'have' message from 1001 for the piece 24.
+2023-11-29 16:58:35: Peer 1002 has downloaded the piece 24 from 1001. Now the number of pieces it has is 112.
+2023-11-29 16:58:35: Peer 1002 received the 'have' message from 1001 for the piece 57.
+2023-11-29 16:58:35: Peer 1002 has downloaded the piece 57 from 1001. Now the number of pieces it has is 113.
+2023-11-29 16:58:35: Peer 1002 received the 'have' message from 1001 for the piece 63.
+2023-11-29 16:58:35: Peer 1002 has downloaded the piece 63 from 1001. Now the number of pieces it has is 114.
+2023-11-29 16:58:35: Peer 1002 received the 'have' message from 1001 for the piece 121.
+2023-11-29 16:58:35: Peer 1002 has downloaded the piece 121 from 1001. Now the number of pieces it has is 115.
+2023-11-29 16:58:35: Peer 1002 received the 'have' message from 1001 for the piece 74.
+2023-11-29 16:58:35: Peer 1002 has downloaded the piece 74 from 1001. Now the number of pieces it has is 116.
+2023-11-29 16:58:35: Peer 1002 received the 'have' message from 1001 for the piece 59.
+2023-11-29 16:58:35: Peer 1002 has downloaded the piece 59 from 1001. Now the number of pieces it has is 117.
+2023-11-29 16:58:35: Peer 1002 received the 'have' message from 1001 for the piece 8.
+2023-11-29 16:58:35: Peer 1002 has downloaded the piece 8 from 1001. Now the number of pieces it has is 118.
+2023-11-29 16:58:35: Peer 1002 received the 'have' message from 1001 for the piece 12.
+2023-11-29 16:58:35: Peer 1002 has downloaded the piece 12 from 1001. Now the number of pieces it has is 119.
+2023-11-29 16:58:35: Peer 1002 received the 'have' message from 1001 for the piece 83.
+2023-11-29 16:58:35: Peer 1002 has downloaded the piece 83 from 1001. Now the number of pieces it has is 120.
+2023-11-29 16:58:35: Peer 1002 received the 'have' message from 1001 for the piece 22.
+2023-11-29 16:58:35: Peer 1002 has downloaded the piece 22 from 1001. Now the number of pieces it has is 121.
+2023-11-29 16:58:35: Peer 1002 received the 'have' message from 1001 for the piece 4.
+2023-11-29 16:58:35: Peer 1002 has downloaded the piece 4 from 1001. Now the number of pieces it has is 122.
+2023-11-29 16:58:35: Peer 1002 received the 'have' message from 1001 for the piece 122.
+2023-11-29 16:58:35: Peer 1002 has downloaded the piece 122 from 1001. Now the number of pieces it has is 123.
+2023-11-29 16:58:35: Peer 1002 received the 'have' message from 1001 for the piece 132.
+2023-11-29 16:58:35: Peer 1002 has downloaded the piece 132 from 1001. Now the number of pieces it has is 124.
+2023-11-29 16:58:35: Peer 1002 received the 'have' message from 1001 for the piece 37.
+2023-11-29 16:58:35: Peer 1002 has downloaded the piece 37 from 1001. Now the number of pieces it has is 125.
+2023-11-29 16:58:35: Peer 1002 received the 'have' message from 1001 for the piece 104.
+2023-11-29 16:58:35: Peer 1002 has downloaded the piece 104 from 1001. Now the number of pieces it has is 126.
+2023-11-29 16:58:35: Peer 1002 received the 'have' message from 1001 for the piece 58.
+2023-11-29 16:58:35: Peer 1002 has downloaded the piece 58 from 1001. Now the number of pieces it has is 127.
+2023-11-29 16:58:35: Peer 1002 received the 'have' message from 1001 for the piece 117.
+2023-11-29 16:58:35: Peer 1002 has downloaded the piece 117 from 1001. Now the number of pieces it has is 128.
+2023-11-29 16:58:35: Peer 1002 received the 'have' message from 1001 for the piece 100.
+2023-11-29 16:58:35: Peer 1002 has downloaded the piece 100 from 1001. Now the number of pieces it has is 129.
+2023-11-29 16:58:35: Peer 1002 received the 'have' message from 1001 for the piece 1.
+2023-11-29 16:58:35: Peer 1002 has downloaded the piece 1 from 1001. Now the number of pieces it has is 130.
+2023-11-29 16:58:35: Peer 1002 received the 'have' message from 1001 for the piece 9.
+2023-11-29 16:58:35: Peer 1002 has downloaded the piece 9 from 1001. Now the number of pieces it has is 131.
+2023-11-29 16:58:35: Peer 1002 received the 'have' message from 1001 for the piece 0.
+2023-11-29 16:58:35: Peer 1002 has downloaded the piece 0 from 1001. Now the number of pieces it has is 132.
+2023-11-29 16:58:35: Peer 1002 received the 'have' message from 1001 for the piece 77.
+2023-11-29 16:58:35: Peer 1002 has downloaded the piece 77 from 1001. Now the number of pieces it has is 133.
+2023-11-29 16:58:35: Peer 1002 has downloaded the complete file.
+2023-11-29 16:58:35: Peer 1002 received the 'not interested' message from 1001.
+2023-11-29 16:58:37: Peer 1002 has the preferred neighbors 1001.
