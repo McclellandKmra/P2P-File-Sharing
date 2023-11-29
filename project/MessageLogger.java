@@ -31,6 +31,7 @@ public class MessageLogger {
             for (int i = 0; i < preferredNeighbors.size(); i++) {
                 writer.write(preferredNeighbors.get(i) + ", ");
             }
+            writer.newLine();
         } catch (IOException e) {
             e.printStackTrace();
         }

@@ -596,6 +596,9 @@ public class PeerProcess {
 
         requestedIndices.remove(Integer.valueOf(pieceIndex));
 
+        System.out.println("Received and saved piece " + pieceIndex + " from " + socket.getRemoteSocketAddress());
+        log.haveLogMessage(this.peerID, peerIDs.get(socket), pieceIndex);
+
         //TODO: logic for if it has the wholse file
         if (fileContents.size() == Math.ceil((double) fileSize / pieceSize)) {
             System.out.println("Saving file");
@@ -604,8 +607,7 @@ public class PeerProcess {
 
         
     
-        System.out.println("Received and saved piece " + pieceIndex + " from " + socket.getRemoteSocketAddress());
-        log.haveLogMessage(this.peerID, peerIDs.get(socket), pieceIndex);
+        
 
         checkAndSendNotInterestedMessages();
 
