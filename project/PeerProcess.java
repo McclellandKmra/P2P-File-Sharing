@@ -223,9 +223,7 @@ public class PeerProcess {
                 Thread listenerThread = new Thread(() -> listenForMessages(socket));
                 listenerThread.start();
                 listenerThreads.add(listenerThread);
-                if (currentPeer.hasFile) {
-                    sendBitfieldMessage(socket);
-                }
+                sendBitfieldMessage(socket);
             }
         } 
         catch (Exception e) {
@@ -463,7 +461,7 @@ public class PeerProcess {
     private void handleNotInterestedMessage(Socket socket, byte[] message) {
         interestedPeers.remove(socket);
         //TODO: handle not interested message and log
-        System.out.println("received not interested message from " + socket.getRemoteSocketAddress());
+        System.out.println("received not interested message from " + peerIDs.get(socket));
     }
 
     private void sendInterestedMessage(Socket socket) {
@@ -474,7 +472,7 @@ public class PeerProcess {
     private void handleInterestedMessage(Socket socket, byte[] message) {
         interestedPeers.add(socket);
         //TODO: handle interested messaage and log
-        System.out.println("received interested message from " + socket.getRemoteSocketAddress());
+        System.out.println("received interested message from " + peerIDs.get(socket));
     }
 
     private void checkAndSendNotInterestedMessages() {
@@ -497,7 +495,7 @@ public class PeerProcess {
 
     private void sendUnchokeMessage(Socket socket) {
         sendMessage(socket, (byte) 1, null);
-        System.out.println("Sent unchoke message to " + socket.getRemoteSocketAddress());
+        System.out.println("Sent unchoke message to " + peerIDs.get(socket));
     }
 
     //TODO:
@@ -505,19 +503,19 @@ public class PeerProcess {
         isUnchoked.put(socket, true);
         isChoked.put(socket, false);
         sendRequestMessage(socket);
-        System.out.println("getting unchoked by " + socket.getRemoteSocketAddress());
+        System.out.println("getting unchoked by " + peerIDs.get(socket));
     }
 
     private void sendChokeMessage(Socket socket) {
         sendMessage(socket, (byte) 0, null);
-        System.out.println("Sent choke message to " + socket.getRemoteSocketAddress());
+        System.out.println("Sent choke message to " + peerIDs.get(socket));
     }
 
     //TODO:
     private void handleChokeMessage(Socket socket, byte[] message) {
         isUnchoked.put(socket, false);
         isChoked.put(socket, true);
-        System.out.println("getting choked by " + socket.getRemoteSocketAddress());
+        System.out.println("getting choked by " + peerIDs.get(socket));
     }
 
     private void sendRequestMessage(Socket socket) {
@@ -549,12 +547,12 @@ public class PeerProcess {
         buffer.putInt(pieceToRequest);
         sendMessage(socket, (byte) 6, buffer.array());
     
-        System.out.println("Sent request message for piece " + pieceToRequest + " to " + socket.getRemoteSocketAddress());
+        System.out.println("Sent request message for piece " + pieceToRequest + " to " + peerIDs.get(socket));
     }
 
     private void handleRequestMessage(Socket socket, byte[] message) {
         int pieceIndex = ByteBuffer.wrap(Arrays.copyOfRange(message, 5, message.length)).getInt();
-        System.out.println("Received request message for piece " + pieceIndex + " from " + socket.getRemoteSocketAddress());
+        System.out.println("Received request message for piece " + pieceIndex + " from " + peerIDs.get(socket));
 
         // Check if the piece is available
         if (bitfield.get(pieceIndex)) {
@@ -575,7 +573,7 @@ public class PeerProcess {
 
         //TODO: Temporary code to allow multiple instances on same device
         try {
-            Thread.sleep(1000);
+            Thread.sleep(300);
         } catch (InterruptedException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
@@ -583,7 +581,7 @@ public class PeerProcess {
 
         // Send the buffer array
         sendMessage(socket, (byte)7, buffer.array());
-        System.out.println("Sent piece " + pieceIndex + " to " + socket.getRemoteSocketAddress());
+        System.out.println("Sent piece " + pieceIndex + " to " + peerIDs.get(socket));
     }
 
     private void handlePieceMessage(Socket socket, byte[] message) {
@@ -605,7 +603,7 @@ public class PeerProcess {
 
         requestedIndices.remove(Integer.valueOf(pieceIndex));
 
-        System.out.println("Received and saved piece " + pieceIndex + " from " + socket.getRemoteSocketAddress());
+        System.out.println("Received and saved piece " + pieceIndex + " from " + peerIDs.get(socket));
         log.haveLogMessage(this.peerID, peerIDs.get(socket), pieceIndex);
 
         int numPieces = 0;
@@ -651,6 +649,16 @@ public class PeerProcess {
         peerBitfields.put(socket, peerBitfield);
     
         System.out.println("Peer " + peerIDs.get(socket) + " has piece " + pieceIndex);
+
+        for (int i = 0; i < Math.ceil((double) fileSize / pieceSize); i++) {
+            if (!peerBitfield.get(i)) {
+                return;
+            }
+        }
+
+        peers.get(peerIDs.get(socket)).hasFile = true;
+        System.out.println("Peer " + peerIDs.get(socket) + " has the complete file");
+        checkExit();
     }
 
 
@@ -717,6 +725,8 @@ public class PeerProcess {
         } catch (IOException e) {
             System.err.println("IO Error while saving the file: " + e.getMessage());
         }
+
+        checkExit();
     }
 
     private byte[] bitsetToByteArray(BitSet bitset) {
@@ -810,6 +820,28 @@ public class PeerProcess {
             int optimisticallyUnchokedPeerID = peerIDs.get(optimisticallyUnchoked);
             log.changeOfOptNeighborsLogMessage(peerID, optimisticallyUnchokedPeerID);
         }
+    }
+
+    private void checkExit() {
+        /* Checks if all peers have the complete file and exits if they do */
+
+        for (PeerInfo peer : peers.values()) {
+            System.out.println(peer.peerID + " " + peer.hasFile);
+            if (peer.peerID == peerID) {
+                continue;
+            }
+            if (!peer.hasFile) {
+                return;
+            }
+        }
+
+        if (fileContents.size() != Math.ceil((double) fileSize / pieceSize)) {
+            return;
+        }
+
+
+        System.out.println("All peers have the complete file. Exiting...");
+        System.exit(0);
     }
 
 }
