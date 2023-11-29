@@ -608,9 +608,19 @@ public class PeerProcess {
         System.out.println("Received and saved piece " + pieceIndex + " from " + socket.getRemoteSocketAddress());
         log.haveLogMessage(this.peerID, peerIDs.get(socket), pieceIndex);
 
+        int numPieces = 0;
+        for (int i = 0; i < bitfield.length(); i++) {
+            if (bitfield.get(i)) {
+                numPieces++;
+            }
+        }
+
+        log.pieceDownloadedLogMessage(peerID, peerIDs.get(socket), pieceIndex, numPieces);
+
         //TODO: logic for if it has the wholse file
         if (fileContents.size() == Math.ceil((double) fileSize / pieceSize)) {
             System.out.println("Saving file");
+            log.fileDownloadedLogMessage(peerID);
             saveCompleteFile();
         }
 
