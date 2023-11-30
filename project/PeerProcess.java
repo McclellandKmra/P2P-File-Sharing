@@ -682,6 +682,8 @@ public class PeerProcess {
     }
 
     private void optimisticUnchokingInterval() {
+        /*  Gets the new optimistically unchoked neighbor and chokes the old one every optimisticUnchokingInterval seconds. */
+
         while(true) {
             List<Socket> chokedInterestedPeers = new ArrayList<>(interestedPeers);
             chokedInterestedPeers.removeAll(preferredNeighbors);
@@ -691,6 +693,13 @@ public class PeerProcess {
                 Socket optimisticallyUnchoked = chokedInterestedPeers.get(0);
                 optimisticallyUnchoked = chokedInterestedPeers.get(0);
                 System.out.println("Optimistically unchoking " + peerIDs.get(optimisticallyUnchoked));
+                if (optimisticallyUnchokedNeighbor != optimisticallyUnchoked) {
+                    if (optimisticallyUnchokedNeighbor != null) {
+                        sendChokeMessage(optimisticallyUnchokedNeighbor);
+                        unchokedNeighbors.remove(optimisticallyUnchokedNeighbor);
+                    }
+                    optimisticallyUnchokedNeighbor = optimisticallyUnchoked;
+                }
                 unchoke(optimisticallyUnchoked);
 
                 log.changeOfOptNeighborsLogMessage(peerID, peerIDs.get(optimisticallyUnchoked));
