@@ -18,3 +18,10 @@ hs_err_pid*
 .project
 .settings/
 .log
+*.class
+*.DS_Store
+*.jpg
+*.tga
+*.log
+project/log_peer_1001.log
+*.class

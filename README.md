@@ -42,10 +42,10 @@
 * Choking and unchoking 
 * Change of preferred neighbors
 * Logging
-* Sending formatted bitfield messages
 
 ## Not Achieved / TODO
 * Testing on CISE machines
+* Fix gitignore file
 
 ## Playbook
 ### Instructions for local compilation:

@@ -456,6 +456,7 @@ public class PeerProcess {
     private void sendNotInterestedMessage(Socket socket) {
         sendMessage(socket, (byte) 3, null);
         log.notInterestedLogMessage(peerID, peerIDs.get(socket));
+        System.out.println("Sending not interested message to " + peerIDs.get(socket));
     }
 
     private void handleNotInterestedMessage(Socket socket, byte[] message) {
@@ -467,6 +468,7 @@ public class PeerProcess {
     private void sendInterestedMessage(Socket socket) {
         sendMessage(socket, (byte) 2, null);
         log.interestedLogMessage(peerID, peerIDs.get(socket));
+        System.out.println("Sending interested message to " + peerIDs.get(socket));
     }
 
     private void handleInterestedMessage(Socket socket, byte[] message) {
@@ -519,6 +521,13 @@ public class PeerProcess {
     }
 
     private void sendRequestMessage(Socket socket) {
+        /* Determines what piece to request and requests it */
+
+        // Return if not unchoked
+        if (!isUnchoked.getOrDefault(socket, false)) {
+            return;
+        }
+
         // Determine which pieces are available, needed, and not already requested
         BitSet availablePieces = peerBitfields.get(socket);
         BitSet neededPieces = (BitSet) bitfield.clone();
@@ -575,7 +584,6 @@ public class PeerProcess {
         try {
             Thread.sleep(300);
         } catch (InterruptedException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
 
