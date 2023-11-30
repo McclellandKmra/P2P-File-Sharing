@@ -23,8 +23,8 @@ public class PeerProcess {
     private List<Integer> requestedIndices = new ArrayList<>();
     private Map<Integer, byte[]> fileContents;
 
-    private Map<Socket, Boolean> isUnchoked = new HashMap<>();
-    private Map<Socket, Boolean> isChoked = new HashMap<>();
+    private Map<Socket, Boolean> isUnchoked = new HashMap<>(); //whether not not this peer is unchoked by the socket peer
+    private List<Socket> unchokedNeighbors = new ArrayList<>(); //peers that are unchoked by this peer; ie. peers that this peer is sending data to
 
     private Map<Integer, PeerInfo> peers = new HashMap<>();
     private Map<Socket, Integer> peerIDs = new HashMap<>();
@@ -35,6 +35,7 @@ public class PeerProcess {
     private List<Socket> connections = new ArrayList<>();
     private List<Socket> preferredNeighbors = new ArrayList<>();
     private Set<Socket> interestedPeers = new HashSet<>();
+    private Socket optimisticallyUnchokedNeighbor;
 
     private List<Thread> listenerThreads = new ArrayList<>();
 
@@ -73,26 +74,12 @@ public class PeerProcess {
         peerProcess.connectToServers();
 
         peerProcess.t2 = new Thread(()-> {
-            while (true) {
-                peerProcess.managePreferredNeighbors();
-                try {
-                    Thread.sleep(1000 * peerProcess.unchokingInterval);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }           
+            peerProcess.unchokingInterval();
         });
         peerProcess.t2.start();
 
         Thread t3 = new Thread(() -> {
-            while (true) {
-                peerProcess.manageOptimisticallyUnchokedNeighbor();
-                try {
-                    Thread.sleep(1000 * peerProcess.optimisticUnchokingInterval);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
+            peerProcess.optimisticUnchokingInterval();
         });
         t3.start();
 
@@ -307,6 +294,7 @@ public class PeerProcess {
 
     // Messages
 
+
     public void handleMessage(Socket socket, byte[] message) {
         /* Calls the appropriate handler for a message type */
 
@@ -477,23 +465,19 @@ public class PeerProcess {
         System.out.println("received interested message from " + peerIDs.get(socket));
     }
 
-    private void checkAndSendNotInterestedMessages() {
+    private void checkAndSendNotInterestedMessages(int pieceIndex) {
+        //called whenever a peer receives a piece completely. If piece causes the peer to no longer be interested, sends a not interested message.
+
         for (Socket peerSocket : connections) {
             BitSet peerBitfield = peerBitfields.get(peerSocket);
-            if (!isInterested(bitfield, peerBitfield)) {
+            if (peerBitfield == null) {
+                continue;
+            }
+            if (!isInterested(bitfield, peerBitfield) && peerBitfield.get(pieceIndex)) {
                 sendNotInterestedMessage(peerSocket);
             }
         }
     }
-    
-    // New helper method to determine if still interested in a peer
-    private boolean isInterested(BitSet myBitfield, BitSet peerBitfield) {
-        BitSet temp = (BitSet) peerBitfield.clone();
-        temp.andNot(myBitfield);
-        return !temp.isEmpty();
-    }
-
-    
 
     private void sendUnchokeMessage(Socket socket) {
         sendMessage(socket, (byte) 1, null);
@@ -503,7 +487,6 @@ public class PeerProcess {
     //TODO:
     private void handleUnchokeMessage(Socket socket, byte[] message) {
         isUnchoked.put(socket, true);
-        isChoked.put(socket, false);
         sendRequestMessage(socket);
         System.out.println("getting unchoked by " + peerIDs.get(socket));
     }
@@ -516,7 +499,6 @@ public class PeerProcess {
     //TODO:
     private void handleChokeMessage(Socket socket, byte[] message) {
         isUnchoked.put(socket, false);
-        isChoked.put(socket, true);
         System.out.println("getting choked by " + peerIDs.get(socket));
     }
 
@@ -630,7 +612,7 @@ public class PeerProcess {
             saveCompleteFile();
         }
 
-        checkAndSendNotInterestedMessages();
+        checkAndSendNotInterestedMessages(pieceIndex);
 
         sendRequestMessage(socket);
     }
@@ -672,7 +654,6 @@ public class PeerProcess {
 
     //Choking
 
-
     public void unchokingInterval() {
         /* Every choking interval of time, recalculates unchoked neighbors and chokes other neighbors */
 
@@ -686,14 +667,42 @@ public class PeerProcess {
                 for (int i = 0; i < Math.min(numberOfPreferredNeighbors, interested.size()); i++) {
                     Socket neighbor = interested.get(i);
                     preferredNeighbors.add(neighbor);
-                    unchoke(neighbor);
+                    if (!unchokedNeighbors.contains(neighbor)) {
+                        unchoke(neighbor);
+                        unchokedNeighbors.add(neighbor);
+                    }
                 }
-                chokeNonPreferredNeighbors();
             }
-            //TODO: implement else when peer does not have complete file
+            else {
+                selectPreferredNeighborsBasedOnRate();
+            }
+
+            chokeNonPreferredNeighbors();
     
             try {
                 Thread.sleep(1000 * unchokingInterval);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private void optimisticUnchokingInterval() {
+        while(true) {
+            List<Socket> chokedInterestedPeers = new ArrayList<>(interestedPeers);
+            chokedInterestedPeers.removeAll(preferredNeighbors);
+            // Ensures we don't select already unchoked peers
+            if (!chokedInterestedPeers.isEmpty()) {
+                Collections.shuffle(chokedInterestedPeers);
+                Socket optimisticallyUnchoked = chokedInterestedPeers.get(0);
+                optimisticallyUnchoked = chokedInterestedPeers.get(0);
+                System.out.println("Optimistically unchoking " + peerIDs.get(optimisticallyUnchoked));
+                unchoke(optimisticallyUnchoked);
+
+                log.changeOfOptNeighborsLogMessage(peerID, peerIDs.get(optimisticallyUnchoked));
+            }
+            try {
+                Thread.sleep(1000 * optimisticUnchokingInterval);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -706,15 +715,23 @@ public class PeerProcess {
     }
 
     public void chokeNonPreferredNeighbors() {
-        for (Socket socket : connections) { //TODO: optimistically unchoked neighbor logic
-            if (!preferredNeighbors.contains(socket)) {
+        for (Socket socket : unchokedNeighbors) {
+            if (!preferredNeighbors.contains(socket) && socket != optimisticallyUnchokedNeighbor) {
                 sendChokeMessage(socket);
+                unchokedNeighbors.remove(socket);
             }
         }
     }
+ 
 
-    
     //Helper Functions
+
+
+    private boolean isInterested(BitSet myBitfield, BitSet peerBitfield) {
+        BitSet temp = (BitSet) peerBitfield.clone();
+        temp.andNot(myBitfield);
+        return !temp.isEmpty();
+    }
     
     public void saveCompleteFile() {
         String outputFilePath = "./" + peerID + "/" + fileName; // Construct the file path
@@ -762,7 +779,7 @@ public class PeerProcess {
 
     private void managePreferredNeighbors() {
 
-    List<Integer> oldPreferredNeighbors = getPeerIDs(preferredNeighbors); // Capture old preferred neighbors before updating
+        List<Integer> oldPreferredNeighbors = getPeerIDs(preferredNeighbors); // Capture old preferred neighbors before updating
 
         if (peers.get(peerID).hasFile) {
             // If peer has the complete file, select preferred neighbors randomly
@@ -809,25 +826,14 @@ public class PeerProcess {
         for (int i = 0; i < Math.min(numberOfPreferredNeighbors, sortedPeers.size()); i++) {
             Socket neighbor = sortedPeers.get(i).getKey();
             preferredNeighbors.add(neighbor);
-            unchoke(neighbor);
+            if (!unchokedNeighbors.contains(neighbor)) {
+                unchoke(neighbor);
+                unchokedNeighbors.add(neighbor);
+            }
         }
     
         // Reset download rates for the next interval
         downloadRates.clear();
-    }
-
-    private void manageOptimisticallyUnchokedNeighbor() {
-        List<Socket> chokedInterestedPeers = new ArrayList<>(interestedPeers);
-        chokedInterestedPeers.removeAll(preferredNeighbors);
-        // Ensures we don't select already unchoked peers
-        if (!chokedInterestedPeers.isEmpty()) {
-            Collections.shuffle(chokedInterestedPeers);
-            Socket optimisticallyUnchoked = chokedInterestedPeers.get(0);
-            unchoke(optimisticallyUnchoked);
-
-            int optimisticallyUnchokedPeerID = peerIDs.get(optimisticallyUnchoked);
-            log.changeOfOptNeighborsLogMessage(peerID, optimisticallyUnchokedPeerID);
-        }
     }
 
     private void checkExit() {
