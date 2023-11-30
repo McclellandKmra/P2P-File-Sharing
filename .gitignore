@@ -25,3 +25,4 @@ hs_err_pid*
 *.log
 project/log_peer_1001.log
 *.class
+*.class

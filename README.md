@@ -15,16 +15,19 @@
 * Sending and handling piece messages
 * Keeping track of and saving file contents
 * Sending and recieving have messages
+* Choking and unchoking logic
+* Sending and handling nterested/not interested messages
 
 ###  Kyle McClelland:
 * Git repo setup
 * Logging system
-* Pair programming for:
+* Pair programming for: Choking and unchoking logic, preferred peer evalutaion, peer initilizatoin and connection, and messages
 
 ###  James Archibald:
 * Bitfield initialization
 * Midpoint submission formatting
-* Pair programming for:
+* Evaluating unchoking interval based on download speed
+* Choking non perferred neighbors
 
 ## Achieved
 * Reading data from files
@@ -32,20 +35,22 @@
 * Connecting to previous peers
 * Handshake messages
 * Bitfield messages after handshake 
+* Calculating preferred neighbors through regular and optimistic unchoking
+* Choke & unchoke messages
+* Interested & not interested messages
 * Request messages
 * Piece messages
-* Saving to the file once a peer has all the contents
 * Have messages
+* Peers constantly requesting files from neighbors that have unchoked them
+* Saving to the file once a peer has all the contents
+* Github requirements such as gitignore file
 
 ## In Progress
-* Interested/not interested messages
-* Choking and unchoking 
-* Change of preferred neighbors
 * Logging
 
 ## Not Achieved / TODO
 * Testing on CISE machines
-* Fix gitignore file
+* Change to concurrency safe variables
 
 ## Playbook
 ### Instructions for local compilation:

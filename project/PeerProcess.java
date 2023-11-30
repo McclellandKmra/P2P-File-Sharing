@@ -1,10 +1,7 @@
 import java.net.*;
 import java.io.*;
 import java.nio.*;
-import java.nio.channels.*;
-import java.text.SimpleDateFormat;
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class PeerProcess {
     public Thread t1, t2; // t1 = listener thread for incoming connections, t2 = thread for calculating unchoking interval
@@ -484,11 +481,10 @@ public class PeerProcess {
         System.out.println("Sent unchoke message to " + peerIDs.get(socket));
     }
 
-    //TODO:
     private void handleUnchokeMessage(Socket socket, byte[] message) {
         isUnchoked.put(socket, true);
-        sendRequestMessage(socket);
         System.out.println("getting unchoked by " + peerIDs.get(socket));
+        sendRequestMessage(socket);
     }
 
     private void sendChokeMessage(Socket socket) {
@@ -496,7 +492,6 @@ public class PeerProcess {
         System.out.println("Sent choke message to " + peerIDs.get(socket));
     }
 
-    //TODO:
     private void handleChokeMessage(Socket socket, byte[] message) {
         isUnchoked.put(socket, false);
         System.out.println("getting choked by " + peerIDs.get(socket));
@@ -605,7 +600,6 @@ public class PeerProcess {
 
         log.pieceDownloadedLogMessage(peerID, peerIDs.get(socket), pieceIndex, numPieces);
 
-        //TODO: logic for if it has the wholse file
         if (fileContents.size() == Math.ceil((double) fileSize / pieceSize)) {
             System.out.println("Saving file");
             log.fileDownloadedLogMessage(peerID);
@@ -710,7 +704,6 @@ public class PeerProcess {
     }
 
     private void unchoke(Socket socket) {
-        //TODO: logic for making sure it wasnt previously choked
         sendUnchokeMessage(socket);
     }
 
@@ -775,43 +768,6 @@ public class PeerProcess {
             }
         }
         return bitset;
-    }
-
-    private void managePreferredNeighbors() {
-
-        List<Integer> oldPreferredNeighbors = getPeerIDs(preferredNeighbors); // Capture old preferred neighbors before updating
-
-        if (peers.get(peerID).hasFile) {
-            // If peer has the complete file, select preferred neighbors randomly
-            selectPreferredNeighborsRandomly();
-        } else {
-            // Otherwise, select based on download rates
-            selectPreferredNeighborsBasedOnRate();
-        }
-        chokeNonPreferredNeighbors();
-
-        List<Integer> newPreferredNeighbors = getPeerIDs(preferredNeighbors); // Capture new preferred neighbors after updating
-        if (!oldPreferredNeighbors.equals(newPreferredNeighbors)) {
-            if (!newPreferredNeighbors.isEmpty()) {
-                log.changeOfNeighborsLogMessage(peerID, newPreferredNeighbors);
-            }
-        }
-    }
-
-    private List<Integer> getPeerIDs(List<Socket> sockets) {
-        return sockets.stream().map(peerIDs::get).collect(Collectors.toList());
-    }
-    
-    private void selectPreferredNeighborsRandomly() {
-        List<Socket> interested = new ArrayList<>(interestedPeers);
-        Collections.shuffle(interested);
-        preferredNeighbors.clear();
-        for (int i = 0; i < Math.min(numberOfPreferredNeighbors, interested.size()); i++) {
-            Socket neighbor = interested.get(i);
-            preferredNeighbors.add(neighbor);
-            unchoke(neighbor);
-        }
-        
     }
 
     private void selectPreferredNeighborsBasedOnRate() {
