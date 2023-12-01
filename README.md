@@ -52,6 +52,8 @@
 
 ## Not Achieved / TODO
 * Testing on CISE machines
+* Remove intentional delay & print debugging for final submission
+* Update playbook for remote instructions
 
 ## Playbook
 ### Instructions for local compilation:
