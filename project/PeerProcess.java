@@ -2,6 +2,8 @@ import java.net.*;
 import java.io.*;
 import java.nio.*;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.stream.Collectors;
 
 public class PeerProcess {
@@ -17,21 +19,21 @@ public class PeerProcess {
     private HashMap<Socket, Long> downloadRates = new HashMap<>();
 
     private BitSet bitfield;
-    private HashMap<Socket, BitSet> peerBitfields = new HashMap<>();
-    private List<Integer> requestedIndices = new ArrayList<>();
-    private Map<Integer, byte[]> fileContents;
+    private ConcurrentHashMap<Socket, BitSet> peerBitfields = new ConcurrentHashMap<>();
+    private CopyOnWriteArrayList<Integer> requestedIndices = new CopyOnWriteArrayList<>();
+    private HashMap<Integer, byte[]> fileContents = new HashMap<>();
 
-    private Map<Socket, Boolean> isUnchoked = new HashMap<>(); //whether not not this peer is unchoked by the socket peer
-    private List<Socket> unchokedNeighbors = new ArrayList<>(); //peers that are unchoked by this peer; ie. peers that this peer is sending data to
+    private ConcurrentHashMap<Socket, Boolean> isUnchoked = new ConcurrentHashMap<>();  //whether not not this peer is unchoked by the socket peer
+    private CopyOnWriteArrayList<Socket> unchokedNeighbors = new CopyOnWriteArrayList<>(); //peers that are unchoked by this peer; ie. peers that this peer is sending data to
 
-    private Map<Integer, PeerInfo> peers = new HashMap<>();
-    private Map<Socket, Integer> peerIDs = new HashMap<>();
+    private ConcurrentHashMap<Integer, PeerInfo> peers = new ConcurrentHashMap<>();
+    private ConcurrentHashMap<Socket, Integer> peerIDs = new ConcurrentHashMap<>();
 
     private ServerSocket serverSocket;
-    private HashMap<Socket, ObjectOutputStream> objectOutputStreams = new HashMap<>();
-    private HashMap<Socket, ObjectInputStream> objectInputStreams = new HashMap<>();
-    private List<Socket> connections = new ArrayList<>();
-    private List<Socket> preferredNeighbors = new ArrayList<>();
+    private ConcurrentHashMap<Socket, ObjectOutputStream> objectOutputStreams = new ConcurrentHashMap<>();
+    private ConcurrentHashMap<Socket, ObjectInputStream> objectInputStreams = new ConcurrentHashMap<>();
+    private CopyOnWriteArrayList<Socket> connections = new CopyOnWriteArrayList<>();
+    private CopyOnWriteArrayList<Socket> preferredNeighbors = new CopyOnWriteArrayList<>();
     private Set<Socket> interestedPeers = new HashSet<>(); //Peers that are interested in this peers data
     private Set<Socket> interestingPeers = new HashSet<>(); //Peers that this peer is interested in
     private Socket optimisticallyUnchokedNeighbor;
@@ -313,24 +315,28 @@ public class PeerProcess {
     public void sendMessage(Socket socket, byte messageType, byte[] payload) {
         /* Formats and sends the message to the given socket */
 
-        try {
-            ObjectOutputStream out = objectOutputStreams.get(socket);
+        synchronized (objectOutputStreams.get(socket)) { // Synchronize on the specific ObjectOutputStream for the socket
+            try {
+                ObjectOutputStream out = objectOutputStreams.get(socket);
     
-            // Determine message length
-            int messageLength = (payload != null) ? payload.length + 1 : 1;
+                // Determine message length
+                int messageLength = (payload != null) ? payload.length + 1 : 1;
     
-            // Create message
-            ByteBuffer messageBuffer = ByteBuffer.allocate(4 + messageLength);
-            messageBuffer.putInt(messageLength);
-            messageBuffer.put(messageType);
-            if (payload != null) {
-                messageBuffer.put(payload);
+                // Create message
+                ByteBuffer messageBuffer = ByteBuffer.allocate(4 + messageLength);
+                messageBuffer.putInt(messageLength);
+                messageBuffer.put(messageType);
+                if (payload != null) {
+                    messageBuffer.put(payload);
+                }
+    
+                // Send message
+                out.writeObject(messageBuffer.array());
+                out.flush(); // Ensure data is sent immediately
+                out.reset(); // Reset the stream to handle subsequent objects correctly
+            } catch (IOException e) {
+                e.printStackTrace();
             }
-    
-            // Send message
-            out.writeObject(messageBuffer.array());
-        } catch (IOException e) {
-            e.printStackTrace();
         }
     }
 
