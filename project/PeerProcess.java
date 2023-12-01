@@ -626,8 +626,6 @@ public class PeerProcess {
     }
 
     private void handleHaveMessage(Socket socket, byte[] message) {
-        //TODO: Make sure this is accurate
-
         int pieceIndex = ByteBuffer.wrap(Arrays.copyOfRange(message, 5, message.length)).getInt();
 
         // Retrieve the bitfield for the corresponding peer
@@ -714,8 +712,8 @@ public class PeerProcess {
                         unchokedNeighbors.remove(optimisticallyUnchokedNeighbor);
                     }
                     optimisticallyUnchokedNeighbor = optimisticallyUnchoked;
+                    sendUnchokeMessage(optimisticallyUnchoked);
                 }
-                sendUnchokeMessage(optimisticallyUnchoked);
 
                 log.changeOfOptNeighborsLogMessage(peerID, peerIDs.get(optimisticallyUnchoked));
             }

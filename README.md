@@ -17,6 +17,7 @@
 * Sending and recieving have messages
 * Choking and unchoking logic
 * Sending and handling nterested/not interested messages
+* Concurrency and thread safety
 
 ###  Kyle McClelland:
 * Git repo setup
@@ -44,13 +45,13 @@
 * Peers constantly requesting files from neighbors that have unchoked them
 * Saving to the file once a peer has all the contents
 * Github requirements such as gitignore file
+* Accounted for multiple threads trying to access shared resources
 
 ## In Progress
 * Logging
 
 ## Not Achieved / TODO
 * Testing on CISE machines
-* Change to concurrency safe variables
 
 ## Playbook
 ### Instructions for local compilation:
