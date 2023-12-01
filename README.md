@@ -21,7 +21,7 @@
 
 ###  Kyle McClelland:
 * Git repo setup
-* Logging system
+* Logging class/calling logging methods
 * Pair programming for: Choking and unchoking logic, preferred peer evalutaion, peer initilizatoin and connection, and messages
 
 ###  James Archibald:
@@ -48,7 +48,7 @@
 * Accounted for multiple threads trying to access shared resources
 
 ## In Progress
-* Logging
+
 
 ## Not Achieved / TODO
 * Testing on CISE machines
