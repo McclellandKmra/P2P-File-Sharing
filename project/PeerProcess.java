@@ -2,6 +2,7 @@ import java.net.*;
 import java.io.*;
 import java.nio.*;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class PeerProcess {
     public Thread t1, t2; // t1 = listener thread for incoming connections, t2 = thread for calculating unchoking interval
@@ -31,7 +32,8 @@ public class PeerProcess {
     private HashMap<Socket, ObjectInputStream> objectInputStreams = new HashMap<>();
     private List<Socket> connections = new ArrayList<>();
     private List<Socket> preferredNeighbors = new ArrayList<>();
-    private Set<Socket> interestedPeers = new HashSet<>();
+    private Set<Socket> interestedPeers = new HashSet<>(); //Peers that are interested in this peers data
+    private Set<Socket> interestingPeers = new HashSet<>(); //Peers that this peer is interested in
     private Socket optimisticallyUnchokedNeighbor;
 
     private List<Thread> listenerThreads = new ArrayList<>();
@@ -440,6 +442,7 @@ public class PeerProcess {
 
     private void sendNotInterestedMessage(Socket socket) {
         sendMessage(socket, (byte) 3, null);
+        interestingPeers.remove(socket);
         log.notInterestedLogMessage(peerID, peerIDs.get(socket));
         System.out.println("Sending not interested message to " + peerIDs.get(socket));
     }
@@ -452,6 +455,7 @@ public class PeerProcess {
 
     private void sendInterestedMessage(Socket socket) {
         sendMessage(socket, (byte) 2, null);
+        interestingPeers.add(socket);
         log.interestedLogMessage(peerID, peerIDs.get(socket));
         System.out.println("Sending interested message to " + peerIDs.get(socket));
     }
@@ -579,7 +583,7 @@ public class PeerProcess {
         ByteBuffer buffer = ByteBuffer.allocate(4);
         buffer.putInt(pieceIndex);
 
-        long pieceSize = message.length - 5; // Adjust this if your message has additional headers or information
+        long pieceSize = message.length - 5;
         downloadRates.put(socket, downloadRates.getOrDefault(socket, 0L) + pieceSize);
 
         for (Socket connection : connections) {
@@ -634,6 +638,11 @@ public class PeerProcess {
     
         System.out.println("Peer " + peerIDs.get(socket) + " has piece " + pieceIndex);
 
+        if (!bitfield.get(pieceIndex) && !interestingPeers.contains(socket)) {
+            // If this peer does not have the piece, send 'interested' message
+            sendInterestedMessage(socket);
+        }
+
         for (int i = 0; i < Math.ceil((double) fileSize / pieceSize); i++) {
             if (!peerBitfield.get(i)) {
                 return;
@@ -662,7 +671,7 @@ public class PeerProcess {
                     Socket neighbor = interested.get(i);
                     preferredNeighbors.add(neighbor);
                     if (!unchokedNeighbors.contains(neighbor)) {
-                        unchoke(neighbor);
+                        sendUnchokeMessage(neighbor);
                         unchokedNeighbors.add(neighbor);
                     }
                 }
@@ -700,7 +709,7 @@ public class PeerProcess {
                     }
                     optimisticallyUnchokedNeighbor = optimisticallyUnchoked;
                 }
-                unchoke(optimisticallyUnchoked);
+                sendUnchokeMessage(optimisticallyUnchoked);
 
                 log.changeOfOptNeighborsLogMessage(peerID, peerIDs.get(optimisticallyUnchoked));
             }
@@ -710,10 +719,6 @@ public class PeerProcess {
                 e.printStackTrace();
             }
         }
-    }
-
-    private void unchoke(Socket socket) {
-        sendUnchokeMessage(socket);
     }
 
     public void chokeNonPreferredNeighbors() {
@@ -782,24 +787,27 @@ public class PeerProcess {
     private void selectPreferredNeighborsBasedOnRate() {
         // Clear the current preferred neighbors list
         preferredNeighbors.clear();
-    
-        // Sort the peers by their download rates in descending order
-        List<Map.Entry<Socket, Long>> sortedPeers = new ArrayList<>(downloadRates.entrySet());
-        sortedPeers.sort((o1, o2) -> o2.getValue().compareTo(o1.getValue()));
-    
-        // Pick the top 'k' peers
-        for (int i = 0; i < Math.min(numberOfPreferredNeighbors, sortedPeers.size()); i++) {
-            Socket neighbor = sortedPeers.get(i).getKey();
+
+        // Filter only interested peers
+        List<Map.Entry<Socket, Long>> interestedSortedPeers = downloadRates.entrySet().stream()
+                .filter(entry -> interestedPeers.contains(entry.getKey()))
+                .sorted((o1, o2) -> o2.getValue().compareTo(o1.getValue()))
+                .collect(Collectors.toList());
+
+        // Pick the top 'k' interested peers based on download rates
+        for (int i = 0; i < Math.min(numberOfPreferredNeighbors, interestedSortedPeers.size()); i++) {
+            Socket neighbor = interestedSortedPeers.get(i).getKey();
             preferredNeighbors.add(neighbor);
             if (!unchokedNeighbors.contains(neighbor)) {
-                unchoke(neighbor);
+                sendUnchokeMessage(neighbor);
                 unchokedNeighbors.add(neighbor);
             }
         }
-    
+
         // Reset download rates for the next interval
         downloadRates.clear();
     }
+
 
     private void checkExit() {
         /* Checks if all peers have the complete file and exits if they do */
