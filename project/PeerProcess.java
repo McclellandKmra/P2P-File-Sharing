@@ -241,6 +241,8 @@ public class PeerProcess {
                     objectOutputStreams.put(socket, out);
                     objectInputStreams.put(socket, in);
                     connections.add(socket);
+
+                    log.TCPLogMessage(this.peerID, currentPeerId);
     
                     // Send a handshake message to the connected peer
                     sendHandshake(socket);
@@ -252,7 +254,7 @@ public class PeerProcess {
                     //peers without the file may skip the bitfield, but all peers exchange bitfields for consistency. 
                     sendBitfieldMessage(socket);
                     
-                    log.TCPLogMessage(this.peerID, currentPeerId);
+                    
                 } catch (IOException e) {
                     System.err.println("Error connecting to peer " + currentPeerId + " at " + peerInfo.hostname + ":" + peerInfo.port);
                     e.printStackTrace();
@@ -449,7 +451,6 @@ public class PeerProcess {
     private void sendNotInterestedMessage(Socket socket) {
         sendMessage(socket, (byte) 3, null);
         interestingPeers.remove(socket);
-        log.notInterestedLogMessage(peerID, peerIDs.get(socket));
         System.out.println("Sending not interested message to " + peerIDs.get(socket));
     }
 
@@ -457,12 +458,12 @@ public class PeerProcess {
         interestedPeers.remove(socket);
         //TODO: handle not interested message and log
         System.out.println("received not interested message from " + peerIDs.get(socket));
+        log.notInterestedLogMessage(peerID, peerIDs.get(socket));
     }
 
     private void sendInterestedMessage(Socket socket) {
         sendMessage(socket, (byte) 2, null);
         interestingPeers.add(socket);
-        log.interestedLogMessage(peerID, peerIDs.get(socket));
         System.out.println("Sending interested message to " + peerIDs.get(socket));
     }
 
@@ -470,6 +471,7 @@ public class PeerProcess {
         interestedPeers.add(socket);
         //TODO: handle interested messaage and log
         System.out.println("received interested message from " + peerIDs.get(socket));
+        log.interestedLogMessage(peerID, peerIDs.get(socket));
     }
 
     private void checkAndSendNotInterestedMessages(int pieceIndex) {
