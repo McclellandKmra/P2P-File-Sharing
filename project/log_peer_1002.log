@@ -1,14 +1,24 @@
-2023-12-01 15:11:18: Peer 1002 received the 'not interested' message from 1001.
-2023-12-01 15:11:19: Peer 1002 received the 'have' message from 1001 for the piece 0.
-2023-12-01 15:11:19: Peer 1002 has downloaded the piece 0 from 1001. Now the number of pieces it has is 1.
-2023-12-01 15:11:20: Peer 1002 received the 'have' message from 1001 for the piece 3.
-2023-12-01 15:11:20: Peer 1002 has downloaded the piece 3 from 1001. Now the number of pieces it has is 2.
-2023-12-01 15:11:20: Peer 1002 received the 'have' message from 1001 for the piece 1.
-2023-12-01 15:11:20: Peer 1002 has downloaded the piece 1 from 1001. Now the number of pieces it has is 3.
-2023-12-01 15:11:20: Peer 1002 received the 'have' message from 1001 for the piece 5.
-2023-12-01 15:11:20: Peer 1002 has downloaded the piece 5 from 1001. Now the number of pieces it has is 4.
-2023-12-01 15:11:21: Peer 1002 received the 'have' message from 1001 for the piece 2.
-2023-12-01 15:11:21: Peer 1002 has downloaded the piece 2 from 1001. Now the number of pieces it has is 5.
-2023-12-01 15:11:21: Peer 1002 received the 'have' message from 1001 for the piece 4.
-2023-12-01 15:11:21: Peer 1002 has downloaded the piece 4 from 1001. Now the number of pieces it has is 6.
-2023-12-01 15:11:21: Peer 1002 has downloaded the complete file.
+2023-12-01 16:33:08: Peer 1002 received the 'not interested' message from 1001.
+2023-12-01 16:33:08: Peer 1002 is unchoked by 1001.
+2023-12-01 16:33:08: Peer 1002 received the 'have' message from 1001 for the piece 3.
+2023-12-01 16:33:08: Peer 1002 has downloaded the piece 3 from 1001. Now the number of pieces it has is 1.
+2023-12-01 16:33:09: Peer 1002 received the 'have' message from 1001 for the piece 4.
+2023-12-01 16:33:09: Peer 1002 has downloaded the piece 4 from 1001. Now the number of pieces it has is 2.
+2023-12-01 16:33:09: Peer 1002 received the 'have' message from 1001 for the piece 1.
+2023-12-01 16:33:09: Peer 1002 has downloaded the piece 1 from 1001. Now the number of pieces it has is 3.
+2023-12-01 16:33:09: Peer 1003 makes a connection to Peer 1002.
+2023-12-01 16:33:09: Peer 1002 received the 'interested' message from 1003.
+2023-12-01 16:33:09: Peer 1002 is unchoked by 1001.
+2023-12-01 16:33:09: Peer 1002 received the 'have' message from 1001 for the piece 5.
+2023-12-01 16:33:09: Peer 1002 has downloaded the piece 5 from 1001. Now the number of pieces it has is 4.
+2023-12-01 16:33:10: Peer 1002 received the 'have' message from 1001 for the piece 0.
+2023-12-01 16:33:10: Peer 1002 has downloaded the piece 0 from 1001. Now the number of pieces it has is 5.
+2023-12-01 16:33:10: Peer 1002 has the optimistically unchoked neighbor 1003.
+2023-12-01 16:33:10: Peer 1002 received the 'have' message from 1001 for the piece 2.
+2023-12-01 16:33:10: Peer 1002 has downloaded the piece 2 from 1001. Now the number of pieces it has is 6.
+2023-12-01 16:33:10: Peer 1002 has downloaded the complete file.
+2023-12-01 16:33:10: Peer 1002 is choked by 1001.
+2023-12-01 16:33:10: Peer 1004 makes a connection to Peer 1002.
+2023-12-01 16:33:10: Peer 1002 received the 'interested' message from 1004.
+2023-12-01 16:33:11: Peer 1002 received the 'not interested' message from 1003.
+2023-12-01 16:33:12: Peer 1002 has the optimistically unchoked neighbor 1004.

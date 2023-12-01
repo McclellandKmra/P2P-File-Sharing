@@ -27,7 +27,8 @@ public class MessageLogger {
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         String dateString = formatter.format(date);
         try(BufferedWriter writer = new BufferedWriter(new FileWriter(filepath, true))) {
-            writer.write(dateString + ": Peer " + peerID + " has the preferred neighbors ");
+            if (preferredNeighbors.size() > 0) {
+                writer.write(dateString + ": Peer " + peerID + " has the preferred neighbors ");
             for (int i = 0; i < preferredNeighbors.size(); i++) {
                 if (i == preferredNeighbors.size() - 1) {
                     writer.write(preferredNeighbors.get(i) + ".");
@@ -36,6 +37,8 @@ public class MessageLogger {
                 writer.write(preferredNeighbors.get(i) + ", ");
             }
             writer.newLine();
+            }
+            
         } catch (IOException e) {
             e.printStackTrace();
         }

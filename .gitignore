@@ -26,3 +26,6 @@ hs_err_pid*
 project/log_peer_1001.log
 *.class
 *.class
+project/MessageLogger.class
+project/MessageLogger.class
+project/PeerProcess.class

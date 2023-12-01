@@ -1,3 +1,13 @@
-2023-12-01 15:11:18: Peer 1002 makes a connection to Peer 1001.
-2023-12-01 15:11:18: Peer 1001 received the 'interested' message from 1002.
-2023-12-01 15:11:19: Peer 1001 has the optimistically unchoked neighbor 1002.
+2023-12-01 16:33:08: Peer 1002 makes a connection to Peer 1001.
+2023-12-01 16:33:08: Peer 1001 received the 'interested' message from 1002.
+2023-12-01 16:33:08: Peer 1001 has the optimistically unchoked neighbor 1002.
+2023-12-01 16:33:09: Peer 1003 makes a connection to Peer 1001.
+2023-12-01 16:33:09: Peer 1001 received the 'interested' message from 1003.
+2023-12-01 16:33:09: Peer 1001 has the preferred neighbors 1002.
+2023-12-01 16:33:10: Peer 1001 received the 'not interested' message from 1002.
+2023-12-01 16:33:10: Peer 1001 has the optimistically unchoked neighbor 1003.
+2023-12-01 16:33:10: Peer 1004 makes a connection to Peer 1001.
+2023-12-01 16:33:10: Peer 1001 received the 'interested' message from 1004.
+2023-12-01 16:33:11: Peer 1001 received the 'not interested' message from 1003.
+2023-12-01 16:33:12: Peer 1001 has the optimistically unchoked neighbor 1004.
+2023-12-01 16:33:12: Peer 1001 has the preferred neighbors 1004.

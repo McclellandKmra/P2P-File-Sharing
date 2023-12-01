@@ -496,6 +496,7 @@ public class PeerProcess {
     private void handleUnchokeMessage(Socket socket, byte[] message) {
         isUnchoked.put(socket, true);
         System.out.println("getting unchoked by " + peerIDs.get(socket));
+        log.unchokeLogMessage(peerID, peerIDs.get(socket));
         sendRequestMessage(socket);
     }
 
@@ -507,6 +508,7 @@ public class PeerProcess {
     private void handleChokeMessage(Socket socket, byte[] message) {
         isUnchoked.put(socket, false);
         System.out.println("getting choked by " + peerIDs.get(socket));
+        log.chokeLogMessage(peerID, peerIDs.get(socket));
     }
 
     private void sendRequestMessage(Socket socket) {
@@ -687,6 +689,13 @@ public class PeerProcess {
             }
 
             chokeNonPreferredNeighbors();
+            
+            // Log the change of neighbor
+
+            List<Integer> preferredNeighborIds = preferredNeighbors.stream()
+                .map(peerIDs::get)  // Replace socketToPeerIdMap with your map
+                .collect(Collectors.toList());
+            log.changeOfNeighborsLogMessage(peerID, preferredNeighborIds);
     
             try {
                 Thread.sleep(1000 * unchokingInterval);
