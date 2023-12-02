@@ -601,7 +601,6 @@ public class PeerProcess {
         requestedIndices.remove(Integer.valueOf(pieceIndex));
 
         System.out.println("Received and saved piece " + pieceIndex + " from " + peerIDs.get(socket));
-        log.haveLogMessage(this.peerID, peerIDs.get(socket), pieceIndex);
 
         int numPieces = 0;
         for (int i = 0; i < bitfield.length(); i++) {
@@ -643,6 +642,7 @@ public class PeerProcess {
         peerBitfields.put(socket, peerBitfield);
     
         System.out.println("Peer " + peerIDs.get(socket) + " has piece " + pieceIndex);
+        log.haveLogMessage(this.peerID, peerIDs.get(socket), pieceIndex);
 
         if (!bitfield.get(pieceIndex) && !interestingPeers.contains(socket)) {
             // If this peer does not have the piece, send 'interested' message
