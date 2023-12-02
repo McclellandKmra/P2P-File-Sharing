@@ -32,7 +32,7 @@ public class PeerProcess {
     private ServerSocket serverSocket;
     private ConcurrentHashMap<Socket, ObjectOutputStream> objectOutputStreams = new ConcurrentHashMap<>();
     private ConcurrentHashMap<Socket, ObjectInputStream> objectInputStreams = new ConcurrentHashMap<>();
-    private CopyOnWriteArrayList<Socket> connections = new CopyOnWriteArrayList<>();
+    private List<Socket> connections = new ArrayList<>();
     private CopyOnWriteArrayList<Socket> preferredNeighbors = new CopyOnWriteArrayList<>();
     private Set<Socket> interestedPeers = new HashSet<>(); //Peers that are interested in this peers data
     private Set<Socket> interestingPeers = new HashSet<>(); //Peers that this peer is interested in
@@ -75,11 +75,6 @@ public class PeerProcess {
         peerProcess.connectToServers();
 
         peerProcess.t2 = new Thread(()-> {
-            try {
-                Thread.sleep(2000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
             peerProcess.unchokingInterval();
         });
         peerProcess.t2.start();
@@ -826,13 +821,18 @@ public class PeerProcess {
     private void checkExit() {
         /* Checks if all peers have the complete file and exits if they do */
 
-        for (PeerInfo peer : peers.values()) {
-            System.out.println(peer.peerID + " " + peer.hasFile);
-            if (peer.peerID == peerID) {
-                continue;
-            }
-            if (!peer.hasFile) {
+        if (connections.size() != peers.size() - 1) {
+            return;
+        }
+
+        for (BitSet bitfield : peerBitfields.values()) {
+            if (bitfield == null) {
                 return;
+            }
+            for (int i = 0; i < Math.ceil((double) fileSize / pieceSize); i++) {
+                if (!bitfield.get(i)) {
+                    return;
+                }
             }
         }
 
@@ -844,5 +844,4 @@ public class PeerProcess {
         System.out.println("All peers have the complete file. Exiting...");
         System.exit(0);
     }
-
 }
