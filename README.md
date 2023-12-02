@@ -1,6 +1,10 @@
 ## Group Number
+25
 
 ## Team Members
+Landon White, 57113331
+Kyle McClelland 14493484
+James Archibald 
 
 ## Contributions
 
@@ -23,6 +27,7 @@
 * Git repo setup
 * Logging class/calling logging methods
 * Pair programming for: Choking and unchoking logic, preferred peer evalutaion, peer initilizatoin and connection, and messages
+* Connecting to and testing on CISE machines
 
 ###  James Archibald:
 * Bitfield initialization
@@ -56,9 +61,12 @@
 * Update playbook for remote instructions
 
 ## Playbook
+
 ### Instructions for local compilation:
 * Extract the zip file
 * Navigate to CNT4007_Project/project
 * Run javac PeerProcess.java
 * Run java PeerProcess 1001. Repeat for 1002 and 1003 in separate terminals.
 * To add more peers, edit PeerInfo.cfg
+
+### Instructions for compilation on CISE machines:s
