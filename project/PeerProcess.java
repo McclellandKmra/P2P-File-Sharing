@@ -574,14 +574,6 @@ public class PeerProcess {
         buffer.putInt(pieceIndex);
         buffer.put(pieceData);
 
-
-        //TODO: Temporary code to allow multiple instances on same device
-        try {
-            Thread.sleep(25);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
         // Send the buffer array
         sendMessage(socket, (byte)7, buffer.array());
         System.out.println("Sent piece " + pieceIndex + " to " + peerIDs.get(socket));
