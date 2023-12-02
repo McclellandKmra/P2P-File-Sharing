@@ -101,12 +101,15 @@ public class PeerProcess {
     public void readCommon() throws IOException {
         /* reads and stores data from Common.cfg */
 
+        System.out.println("Reading common info");
+
         try (BufferedReader reader = new BufferedReader(new FileReader("Common.cfg"))) {
             String line;
             while ((line = reader.readLine()) != null) {
                 String[] parts = line.split(" ");
                 String key = parts[0];
                 String value = parts[1];
+                System.out.println("Setting " + key + " to " + value);
                 switch (key) {
                     case "NumberOfPreferredNeighbors":
                         numberOfPreferredNeighbors = Integer.parseInt(value);
@@ -134,6 +137,8 @@ public class PeerProcess {
     public void readPeerInfo() throws IOException {
         /* Reads and stores info from peerInfo.cfg */
 
+        System.out.println("Reading peer info");
+
         try (BufferedReader reader = new BufferedReader(new FileReader("PeerInfo.cfg"))) {
             String line;
             while ((line = reader.readLine()) != null) {
@@ -143,6 +148,7 @@ public class PeerProcess {
                 int port = Integer.parseInt(parts[2]);
                 boolean hasFile = parts[3].equals("1");
                 peers.put(peerID, new PeerInfo(peerID, hostname, port, hasFile));
+                System.out.println("Read info for peer" + peerID);
             }
         }
     }
