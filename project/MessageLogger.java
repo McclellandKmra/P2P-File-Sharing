@@ -8,7 +8,7 @@ import java.nio.*;
 public class MessageLogger {
     
     public void TCPLogMessage(int peerID1, int peerID2) {
-        String filepath = "log_peer_" + peerID2 + ".log";
+        String filepath = "log_peer_" + peerID1 + ".log";
         Date date = new Date();
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         String dateString = formatter.format(date);
@@ -19,6 +19,20 @@ public class MessageLogger {
             e.printStackTrace();
         }
     }
+
+    public void TCPLogMessage2(int peerID1, int peerID2) {
+        String filepath = "log_peer_" + peerID1 + ".log";
+        Date date = new Date();
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        String dateString = formatter.format(date);
+        try(BufferedWriter writer = new BufferedWriter(new FileWriter(filepath, true))) {
+            writer.write(dateString + ": Peer " + peerID1 + " is connected from Peer " + peerID2 + ".");
+            writer.newLine();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
 
     //Whenever a peer changes its preferred neighbors, it generates the following log message, taking in the peer and its preferred neighbors
     public void changeOfNeighborsLogMessage(int peerID, List<Integer> preferredNeighbors) {

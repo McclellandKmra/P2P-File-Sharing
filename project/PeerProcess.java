@@ -383,7 +383,11 @@ public class PeerProcess {
             // Extract peer ID from the last 4 bytes
             int receivedPeerID = ByteBuffer.wrap(handshakeBytes, 28, 4).getInt();
             peerIDs.put(socket, receivedPeerID);
+
             //log the message
+            if (this.peerID < receivedPeerID) {
+                log.TCPLogMessage2(this.peerID, receivedPeerID);
+            }
             System.out.println("received handshake from " + receivedPeerID);
 
         } catch (Exception e) {
