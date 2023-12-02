@@ -75,6 +75,11 @@ public class PeerProcess {
         peerProcess.connectToServers();
 
         peerProcess.t2 = new Thread(()-> {
+            try {
+                Thread.sleep(2000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
             peerProcess.unchokingInterval();
         });
         peerProcess.t2.start();
@@ -266,8 +271,6 @@ public class PeerProcess {
     public void listenForMessages(Socket socket) {
         /* Listens for incoming messages from a socket and calls the handler when one is recieved. Each peer has a thread listening for messages from each other
          * peer, so it can accept messages and handle them at any time.
-         * 
-         * TODO: Currently prints the stack trace if an exception is thrown, but this should be either changed or verified it is correct in the future.
          */
 
         try {
@@ -428,7 +431,6 @@ public class PeerProcess {
     }
       
     public void sendBitfieldMessage(Socket socket) {
-        //TODO: use send message function to actually send the bitfield
         try {
             ObjectOutputStream out = objectOutputStreams.get(socket);
             
@@ -456,7 +458,6 @@ public class PeerProcess {
 
     private void handleNotInterestedMessage(Socket socket, byte[] message) {
         interestedPeers.remove(socket);
-        //TODO: handle not interested message and log
         System.out.println("received not interested message from " + peerIDs.get(socket));
         log.notInterestedLogMessage(peerID, peerIDs.get(socket));
     }
@@ -469,7 +470,6 @@ public class PeerProcess {
 
     private void handleInterestedMessage(Socket socket, byte[] message) {
         interestedPeers.add(socket);
-        //TODO: handle interested messaage and log
         System.out.println("received interested message from " + peerIDs.get(socket));
         log.interestedLogMessage(peerID, peerIDs.get(socket));
     }
@@ -532,7 +532,6 @@ public class PeerProcess {
         }
     
         // If there are no pieces to request, return
-        //TODO: make sure this is the right action
         if (possibleRequests.isEmpty()) {
             return;
         }
@@ -573,7 +572,7 @@ public class PeerProcess {
 
         //TODO: Temporary code to allow multiple instances on same device
         try {
-            Thread.sleep(300);
+            Thread.sleep(25);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
