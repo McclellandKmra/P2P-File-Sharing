@@ -73,7 +73,7 @@ DONE
 * To add more peers, edit PeerInfo.cfg
 
 ### Instructions for compilation on CISE machines:
-* Tar source files with `tar -cvf tarname.tar srcfile.java`
+* Tar source files with `tar cvf tarname.tar srcfile.java`
 * Connect to CISE machine (storm, rain, thunder, etc) with `ssh uf_username@cise_machine_name.cise.ufl.edu`
 * Update PeerInfo.cfg with CISE machine numbers/number of peers
 * Update Common.cfg with file name, file size, piece size
