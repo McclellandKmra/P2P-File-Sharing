@@ -29,3 +29,5 @@ project/log_peer_1001.log
 project/MessageLogger.class
 project/MessageLogger.class
 project/PeerProcess.class
+*.tar
+project/1001/thefile

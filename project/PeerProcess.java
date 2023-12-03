@@ -285,7 +285,7 @@ public class PeerProcess {
             // The other end has probably closed the connection.
             System.out.println("Connection closed by " + socket.getRemoteSocketAddress());
         } catch (SocketException e) {
-            System.err.println("SocketException: Connection reset. Attempting to reconnect...");
+            //System.err.println("SocketException: Connection reset. Attempting to reconnect...");
             // Implement reconnection logic here if appropriate
         } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
@@ -611,8 +611,8 @@ public class PeerProcess {
 
         if (fileContents.size() == Math.ceil((double) fileSize / pieceSize)) {
             System.out.println("Saving file");
-            log.fileDownloadedLogMessage(peerID);
             saveCompleteFile();
+            log.fileDownloadedLogMessage(peerID);
         }
 
         checkAndSendNotInterestedMessages(pieceIndex);
@@ -760,7 +760,6 @@ public class PeerProcess {
                 if (pieceData != null) {
                     fileOutputStream.write(pieceData);
                 } else {
-                    System.err.println("Missing piece " + i + ". Cannot save file.");
                     return;
                 }
             }
